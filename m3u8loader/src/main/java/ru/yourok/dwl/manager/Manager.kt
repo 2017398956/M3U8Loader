@@ -1,7 +1,7 @@
 package ru.yourok.dwl.manager
 
 import android.app.Activity
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import ru.yourok.dwl.downloader.Downloader
 import ru.yourok.dwl.downloader.LoadState
 import ru.yourok.dwl.downloader.State

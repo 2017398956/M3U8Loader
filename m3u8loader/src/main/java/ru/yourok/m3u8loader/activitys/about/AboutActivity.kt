@@ -1,8 +1,8 @@
 package ru.yourok.m3u8loader.activitys.about
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import ru.yourok.m3u8loader.BuildConfig
 import ru.yourok.m3u8loader.R
 import ru.yourok.m3u8loader.theme.Theme

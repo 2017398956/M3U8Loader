@@ -1,1 +1,1 @@
-include ':m3u8loader'
+include ':m3u8loader',':crystalrangeseekbar',':videokit'

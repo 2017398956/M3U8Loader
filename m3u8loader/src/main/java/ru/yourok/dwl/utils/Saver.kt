@@ -48,7 +48,7 @@ object Saver {
             js.put("downloadPath", Settings.downloadPath)
             js.put("preloadSize", Settings.preloadSize)
             js.put("convertVideo", Settings.convertVideo)
-            js.put("headers", JSONObject(Settings.headers))
+            js.put("headers", JSONObject(Settings.headers as Map<*, *>))
             val path = App.getContext().filesDir
             val file = File(path, "settings.cfg")
             val str = js.toString(1)

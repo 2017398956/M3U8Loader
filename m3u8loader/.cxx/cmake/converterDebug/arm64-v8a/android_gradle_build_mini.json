@@ -1,0 +1,16 @@
+{
+  "buildFiles": [
+    "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "D:\\mysoftware\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\converterDebug\\arm64-v8a --target clean"
+  ],
+  "libraries": {
+    "fsutils-Debug-arm64-v8a": {
+      "artifactName": "fsutils",
+      "buildCommand": "D:\\mysoftware\\Android\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\converterDebug\\arm64-v8a --target fsutils",
+      "abi": "arm64-v8a",
+      "output": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\build\\intermediates\\cmake\\converterDebug\\obj\\arm64-v8a\\libfsutils.so"
+    }
+  }
+}

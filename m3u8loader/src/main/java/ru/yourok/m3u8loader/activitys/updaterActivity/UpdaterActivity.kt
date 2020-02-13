@@ -1,10 +1,10 @@
 package ru.yourok.m3u8loader.activitys.updaterActivity
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_updater.*
 import ru.yourok.dwl.updater.Updater
 import ru.yourok.m3u8loader.BuildConfig

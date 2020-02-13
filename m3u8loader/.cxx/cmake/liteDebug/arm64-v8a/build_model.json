@@ -1,0 +1,72 @@
+{
+  "variant": {
+    "module": {
+      "rootBuildGradleFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader",
+      "sdkFolder": "D:\\mysoftware\\Android\\Sdk",
+      "isNativeCompilerSettingsCacheEnabled": false,
+      "isBuildOnlyTargetAbiEnabled": true,
+      "splitsAbiFilterSet": [],
+      "intermediatesFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\build\\intermediates",
+      "gradleModulePathName": ":m3u8loader",
+      "moduleRootFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader",
+      "makeFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\src\\main\\cpp\\CMakeLists.txt",
+      "buildSystem": "CMAKE",
+      "compilerSettingsCacheFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\.cxx",
+      "cxxFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx",
+      "ndkFolder": "D:\\mysoftware\\Android\\Sdk\\ndk\\21.0.6113669",
+      "ndkVersion": "21.0.6113669",
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "cmakeToolchainFile": "."
+    },
+    "buildSystemArgumentList": [],
+    "cFlagList": [],
+    "cppFlagsList": [
+      ""
+    ],
+    "variantName": "liteDebug",
+    "soFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\build\\intermediates\\cmake\\liteDebug\\lib",
+    "objFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\build\\intermediates\\cmake\\liteDebug\\obj",
+    "jsonFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug",
+    "gradleBuildOutputFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug",
+    "isDebuggableEnabled": true,
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A",
+      "X86",
+      "X86_64"
+    ],
+    "buildTargetSet": []
+  },
+  "abi": "ARM64_V8A",
+  "abiPlatformVersion": 16,
+  "cxxBuildFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug\\arm64-v8a",
+  "jsonFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug\\arm64-v8a\\android_gradle_build.json",
+  "gradleBuildOutputFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a",
+  "objFolder": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\build\\intermediates\\cmake\\liteDebug\\obj\\arm64-v8a",
+  "buildCommandFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug\\arm64-v8a\\build_command.txt",
+  "buildOutputFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug\\arm64-v8a\\build_output.txt",
+  "modelOutputFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug\\arm64-v8a\\build_model.json",
+  "cmake": {
+    "cmakeListsWrapperFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a\\CMakeLists.txt",
+    "toolchainWrapperFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a\\android_gradle_build.toolchain.cmake",
+    "buildGenerationStateFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a\\build_generation_state.json",
+    "cacheKeyFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a\\compiler_cache_key.json",
+    "compilerCacheUseFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a\\compiler_cache_use.json",
+    "compilerCacheWriteFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a\\compiler_cache_write.json",
+    "toolchainSettingsFromCacheFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cxx\\liteDebug\\arm64-v8a\\compiler_settings_cache.cmake",
+    "cmakeWrappingBaseFolder": "."
+  },
+  "jsonGenerationLoggingRecordFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug\\arm64-v8a\\json_generation_record.json",
+  "compileCommandsJsonFile": "D:\\mysoftware\\Android\\projects\\M3U8Loader\\m3u8loader\\.cxx\\cmake\\liteDebug\\arm64-v8a\\compile_commands.json"
+}

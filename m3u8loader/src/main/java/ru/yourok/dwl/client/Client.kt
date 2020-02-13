@@ -24,9 +24,9 @@ object ClientBuilder {
     fun new(url: Uri): Client {
         url.scheme ?: throw IOException("wrong url: " + url.toString())
 
-        if (url.scheme.startsWith("http", 0, true)) {
+        if (url.scheme!!.startsWith("http", 0, true)) {
             return Http(url)
-        } else if (url.scheme.startsWith("content", 0, true)) {
+        } else if (url.scheme!!.startsWith("content", 0, true)) {
             return Content(url)
         } else {
             return File(url)

@@ -1,0 +1,3 @@
+D:/mysoftware/Android/projects/M3U8Loader/m3u8loader/.cxx/cmake/liteDebug/x86_64/CMakeFiles/fsutils.dir
+D:/mysoftware/Android/projects/M3U8Loader/m3u8loader/.cxx/cmake/liteDebug/x86_64/CMakeFiles/edit_cache.dir
+D:/mysoftware/Android/projects/M3U8Loader/m3u8loader/.cxx/cmake/liteDebug/x86_64/CMakeFiles/rebuild_cache.dir

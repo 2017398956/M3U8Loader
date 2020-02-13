@@ -2,7 +2,7 @@ package ru.yourok.m3u8loader.activitys.mainActivity
 
 import android.content.Context
 import android.graphics.*
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import ru.yourok.dwl.downloader.LoadState

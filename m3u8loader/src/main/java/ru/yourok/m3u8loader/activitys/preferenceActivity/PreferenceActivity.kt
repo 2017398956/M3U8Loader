@@ -5,9 +5,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_preference.*
 import ru.yourok.converter.ConverterHelper
 import ru.yourok.dwl.settings.Preferences

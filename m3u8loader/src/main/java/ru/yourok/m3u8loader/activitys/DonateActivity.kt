@@ -3,8 +3,8 @@ package ru.yourok.m3u8loader.activitys
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import ru.yourok.dwl.settings.Preferences
 import ru.yourok.m3u8loader.R
 import java.util.*

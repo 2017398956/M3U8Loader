@@ -13,3 +13,4 @@ KeyStore/joinerkeys.jks
 KeyStore/converterkeys.jks
 out/
 TODO
+/dist

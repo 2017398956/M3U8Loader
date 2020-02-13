@@ -7,13 +7,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.materialdrawer.Drawer
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.yourok.dwl.downloader.LoadState

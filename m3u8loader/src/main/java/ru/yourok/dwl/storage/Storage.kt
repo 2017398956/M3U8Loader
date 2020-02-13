@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
-import android.support.v4.provider.DocumentFile
+import androidx.documentfile.provider.DocumentFile
 import ru.yourok.m3u8loader.App
 import java.io.File
 
@@ -29,7 +29,7 @@ object Storage {
         val set = getRootsPermissionUri()
         set.forEach {
             val file = DocumentFile.fromTreeUri(App.getContext(), Uri.parse(it))
-            if (file.canWrite())
+            if (file?.canWrite()!!)
                 list.add(file)
         }
         return list
@@ -63,7 +63,7 @@ object Storage {
     private fun getRootsPermissionUri(): Set<String> {
         val prefs = App.getContext().getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         if (prefs.contains("roots")) {
-            return prefs.getStringSet("roots", setOf())
+            return prefs.getStringSet("roots", setOf())!!
         }
         return setOf()
     }
@@ -92,7 +92,7 @@ object Storage {
             var ppath: DocumentFile? = doc
             val parts = mutableListOf<String>()
             while (ppath != null) {
-                parts.add(ppath.name)
+                parts.add(ppath.name!!)
                 ppath = ppath.parentFile
             }
             return parts.asReversed().joinToString("/", "/")

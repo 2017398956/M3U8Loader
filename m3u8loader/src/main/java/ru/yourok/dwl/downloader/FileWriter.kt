@@ -1,7 +1,7 @@
 package ru.yourok.dwl.downloader
 
 import android.net.Uri
-import android.support.v4.provider.DocumentFile
+import androidx.documentfile.provider.DocumentFile
 import ru.yourok.dwl.list.Item
 import ru.yourok.dwl.storage.Storage
 import ru.yourok.dwl.writer.NativeFile

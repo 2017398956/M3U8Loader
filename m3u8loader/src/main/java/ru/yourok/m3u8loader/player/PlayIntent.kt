@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.content.FileProvider
+import androidx.core.content.FileProvider
 import android.widget.Toast
 import ru.yourok.dwl.downloader.Downloader
 import ru.yourok.dwl.settings.Preferences

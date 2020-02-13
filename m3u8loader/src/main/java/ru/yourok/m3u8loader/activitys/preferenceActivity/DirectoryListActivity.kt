@@ -5,14 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.provider.DocumentFile
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.documentfile.provider.DocumentFile
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_directory_list.*
 import ru.yourok.dwl.storage.RequestStoragePermissionActivity
 import ru.yourok.dwl.storage.Storage
@@ -176,7 +176,8 @@ class DirectoryActivity : AppCompatActivity() {
 
                 if (files.isEmpty()) {
                     val doc = Storage.getDocument(DirectoryPath.canonicalPath)
-                    files = doc.listFiles()?.filter { it.isDirectory }?.map { File(Storage.getPath(it)) } ?: listOf()
+                    files = doc.listFiles()?.filter { it.isDirectory }?.map { File(Storage.getPath(it)) }
+                            ?: listOf()
                 }
 
                 files = files.sortedWith(Comparator { file1, file2 ->
@@ -206,7 +207,8 @@ class DirectoryActivity : AppCompatActivity() {
         }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view: View = convertView ?: (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(android.R.layout.simple_list_item_1, null)
+            val view: View = convertView
+                    ?: (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(android.R.layout.simple_list_item_1, null)
             val text1 = view.findViewById<TextView>(android.R.id.text1)
             if (position in 0 until files.size)
                 text1.text = files[position].name
@@ -233,7 +235,8 @@ class DirectoryActivity : AppCompatActivity() {
         }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view: View = convertView ?: (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(android.R.layout.two_line_list_item, null)
+            val view: View = convertView
+                    ?: (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(android.R.layout.two_line_list_item, null)
 
             if (convertView == null) {
                 val paddingPixel = 15

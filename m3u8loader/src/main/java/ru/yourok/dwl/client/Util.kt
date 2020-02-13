@@ -13,7 +13,7 @@ object Util {
 
         var path = baseUrl.path
 
-        if (!path.endsWith("/")) {
+        if (!path?.endsWith("/")!!) {
             val tmp = java.io.File(path).parent
             if (tmp != null)
                 path = tmp
@@ -22,7 +22,7 @@ object Util {
             path = segment
         else
             path = java.io.File(path, segment).path
-        return copyArguments(baseUrl, path)
+        return copyArguments(baseUrl, path!!)
     }
 
     private fun copyArguments(argUrl: Uri, path: String): String {

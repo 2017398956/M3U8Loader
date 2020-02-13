@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_add_list.*
 import ru.yourok.converter.ConverterHelper
 import ru.yourok.dwl.list.List
@@ -42,7 +42,7 @@ class AddListActivity : AppCompatActivity() {
         try {
             if (intent.extras != null) {
                 val bundle = intent.extras
-                for (key in bundle.keySet()) {
+                for (key in bundle!!.keySet()) {
                     if (key.toLowerCase().contains("name") || key.toLowerCase().contains("title")) {
                         val value = bundle.get(key)
                         if (value != null) {
@@ -65,8 +65,8 @@ class AddListActivity : AppCompatActivity() {
                     editTextUrl.setText(intent.getStringExtra(Intent.EXTRA_TEXT))
                     showNotify = true
                 }
-                if (intent.extras.get(Intent.EXTRA_STREAM) != null) {
-                    editTextUrl.setText(intent.extras.get(Intent.EXTRA_STREAM).toString())
+                if (intent.extras!!.get(Intent.EXTRA_STREAM) != null) {
+                    editTextUrl.setText(intent.extras!!.get(Intent.EXTRA_STREAM).toString())
                     showNotify = true
                 }
             }
