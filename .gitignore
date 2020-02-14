@@ -16,3 +16,4 @@ TODO
 /dist
 /.idea
 /m3u8loader/.cxx
+/m3u8loader/converter
