@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -34,11 +35,8 @@ class AddListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Theme.set(this)
         setContentView(R.layout.activity_add_list)
-
         textViewError.text = ""
-
         var download = false
-
         try {
             if (intent.extras != null) {
                 val bundle = intent.extras
@@ -77,7 +75,7 @@ class AddListActivity : AppCompatActivity() {
                 showNotify = true
             }
 
-            if (editTextFileName.getText().toString().isEmpty()) {
+            if (editTextFileName.text.toString().isEmpty()) {
                 var count = 0
                 var found = true
                 while (found) {
@@ -123,8 +121,8 @@ class AddListActivity : AppCompatActivity() {
         if (download) downloadBtnClick(buttonDownload)
     }
 
-    fun updateDownloadPath() {
-        textViewDirectoryPathAdd.setText(downloadPath)
+    private fun updateDownloadPath() {
+        textViewDirectoryPathAdd.text = downloadPath
         val totalSpace = Storage.getSpace(Storage.getDocument(downloadPath), true)
         val freeSpace = Storage.getSpace(Storage.getDocument(downloadPath), false)
         textViewDiskSize.text = "%s / %s".format(Utils.byteFmt(totalSpace - freeSpace), Utils.byteFmt(totalSpace))
@@ -144,26 +142,27 @@ class AddListActivity : AppCompatActivity() {
         finish()
     }
 
-    fun addList(download: Boolean) {
-        val Name = cleanFileName(editTextFileName.getText().toString().trim())
-        val Url = editTextUrl.getText().toString().trim()
-        val SubsUrl = editTextSubtitles.getText().toString().trim()
+    private fun addList(download: Boolean) {
+        val url = editTextUrl.text.toString().trim()
+        val name = cleanFileName(editTextFileName.text.toString().trim())
+        val subsUrl = editTextSubtitles.text.toString().trim()
 
-        if (Url.isEmpty()) {
+        if (url.isEmpty()) {
             toastErr(R.string.error_empty_url)
             return
         }
-
-        if (Name.isEmpty()) {
+        if (name.isEmpty()) {
             toastErr(R.string.error_empty_name)
             return
         }
+
         waitView(true)
+
         thread {
             try {
-                val lists = Parser(Name, Url, downloadPath).parse()
+                val lists = Parser(name, url, downloadPath).parse()
                 lists.forEach {
-                    it.subsUrl = SubsUrl
+                    it.subsUrl = subsUrl
                     it.isConvert = (checkboxConvertAdd?.isChecked ?: Settings.convertVideo) && ConverterHelper.isSupport()
                 }
                 Manager.addList(lists)
@@ -181,11 +180,11 @@ class AddListActivity : AppCompatActivity() {
                     runOnUiThread {
                         AlertDialog.Builder(this).setTitle(R.string.error_wrong_format).setMessage(R.string.warn_wrong_format).setPositiveButton(android.R.string.yes) { p0, p1 ->
                             val intent = Intent(Intent.ACTION_VIEW)
-                            intent.setDataAndType(Uri.parse(Url), "video/*")
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            intent.putExtra("title", Name)
+                            intent.setDataAndType(Uri.parse(url), "video/*")
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            intent.putExtra("title", name)
                             val chooser = Intent.createChooser(intent, "")
-                            chooser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            chooser.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             startActivity(chooser)
                             finish()
                         }.setNegativeButton(android.R.string.no) { p0, p1 ->
@@ -203,7 +202,7 @@ class AddListActivity : AppCompatActivity() {
     private fun toastErr(msg: String) {
         if (msg.isNotEmpty()) runOnUiThread {
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-            textViewError.setText(msg)
+            textViewError.text = msg
         }
     }
 
@@ -214,6 +213,9 @@ class AddListActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 是否展示等待视图
+     */
     private fun waitView(set: Boolean) {
         runOnUiThread {
             if (set) {

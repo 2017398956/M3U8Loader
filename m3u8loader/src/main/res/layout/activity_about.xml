@@ -39,14 +39,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
-            android:text="YouROK"
+            android:text="choochoo_fly"
             android:paddingRight="15dp" />
 
         <TextView
             android:autoLink="email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8YouROK8@gmail.com" />
+            android:text="2017398956@qq.com" />
     </LinearLayout>
 
     <TextView

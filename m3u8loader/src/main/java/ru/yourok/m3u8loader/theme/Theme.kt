@@ -18,11 +18,11 @@ object Theme {
         }
     }
 
-    fun setDarkTheme(activity: Activity) {
+    private fun setDarkTheme(activity: Activity) {
         activity.setTheme(R.style.AppThemeDark)
     }
 
-    fun setLightTheme(activity: Activity) {
+    private fun setLightTheme(activity: Activity) {
         activity.setTheme(R.style.AppThemeLight)
     }
 

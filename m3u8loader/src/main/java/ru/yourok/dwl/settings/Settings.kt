@@ -1,6 +1,6 @@
 package ru.yourok.dwl.settings
 
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import ru.yourok.m3u8loader.App
 
 
@@ -9,18 +9,15 @@ import ru.yourok.m3u8loader.App
  */
 object Settings {
     var threads: Int = 10
+    // 发生下载错误后可自动重试下载的次数
     var errorRepeat: Int = 5
     var downloadPath: String = ""
     var preloadSize: Boolean = true
     var convertVideo: Boolean = false
-
     var headers: MutableMap<String, String> = mutableMapOf()
 }
 
 object Preferences {
-    val DocumentRootUri = "DocumentRootUri"
-
-
     fun get(name: String, def: Any): Any? {
         val prefs = PreferenceManager.getDefaultSharedPreferences(App.getContext())
         if (prefs.all.containsKey(name))

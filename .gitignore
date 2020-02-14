@@ -14,3 +14,5 @@ KeyStore/converterkeys.jks
 out/
 TODO
 /dist
+/.idea
+/m3u8loader/.cxx

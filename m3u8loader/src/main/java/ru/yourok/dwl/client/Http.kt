@@ -25,48 +25,55 @@ class Http(url: Uri) : Client {
         connect(0)
     }
 
+    /**
+     * @param pos 开始下载的位置，用于断点下载
+     * @return 返回要下载文件的大小
+     */
     override fun connect(pos: Long): Long {
         var responseCode: Int
         var redirCount = 0
+
         do {
             var url = URL(currUrl)
             connection = url.openConnection() as HttpURLConnection
             connection!!.connectTimeout = 30000
             connection!!.readTimeout = 15000
-            connection!!.setRequestMethod("GET")
-            connection!!.setDoInput(true)
-
+            connection!!.requestMethod = "GET"
+            connection!!.doInput = true
             connection!!.setRequestProperty("UserAgent", "DWL/1.1.0 (Android)")
             connection!!.setRequestProperty("Accept", "*/*")
             connection!!.setRequestProperty("Accept-Encoding", "gzip")
-            if (pos > 0)
+            if (pos > 0) {
                 connection!!.setRequestProperty("Range", "bytes=$pos-")
-
+            }
             if (Settings.headers.isNotEmpty()) {
                 Settings.headers.forEach { (k, v) ->
                     connection!!.setRequestProperty(k, v)
                 }
             }
-
             connection!!.connect()
 
-            responseCode = connection!!.getResponseCode()
+            responseCode = connection!!.responseCode
+            // 判断是否需要重定向
             val redirected = responseCode == HTTP_MOVED_PERM || responseCode == HTTP_MOVED_TEMP || responseCode == HTTP_SEE_OTHER
             if (redirected) {
+                // 获取重定向的地址
                 currUrl = connection!!.getHeaderField("Location")
                 connection!!.disconnect()
                 redirCount++
             }
             if (redirCount > 5) {
-                throw IOException("Error connect to: " + currUrl + " too many redirects")
+                // 如果重定向的次数太多抛出异常
+                throw IOException("Error connect to: $currUrl too many redirects")
             }
         } while (redirected)
 
-
-        if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_PARTIAL) {
-            throw IOException("Error connect to: " + currUrl + " " + connection!!.responseMessage)
+        if (responseCode != HTTP_OK && responseCode != HTTP_PARTIAL) {
+            throw IOException("Error connect to: $currUrl " + connection!!.responseMessage)
         }
+
         isConn = true
+
         if ((connection!!.getHeaderField("Accept-Ranges")?.toLowerCase() ?: "") == "none")
             return -1
         return getSize()

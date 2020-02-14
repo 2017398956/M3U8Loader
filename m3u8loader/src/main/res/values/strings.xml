@@ -42,7 +42,7 @@
     <string name="translators">Translators</string>
 
     <string name="donation">Donation</string>
-    <string name="donation_msg">If you like M3U8Loader we\'d be happy about a donation.\nOr you can make a beautiful photo and send the author to the email/telegram &#128522;</string>
+    <string name="donation_msg">If you like M3U8Loader we\'d be happy about a donation.\nOr you can make a beautiful photo and send the author to the email &#128522;</string>
 
     <string name="permission_storage_msg">Storage permission is needed to download and write files</string>
     <string name="permission_btn">GRANT</string>
@@ -93,4 +93,7 @@
         <item>MX Player</item>
         <item>Kodi player</item>
     </string-array>
+
+    <string name="pay_wechat">WeChat</string>
+    <string name="pay_alipay">AliPay</string>
 </resources>

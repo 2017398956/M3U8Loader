@@ -18,7 +18,7 @@ import kotlin.concurrent.thread
 /**
  * Created by yourok on 19.11.17.
  */
-class LoaderListSelectionMenu(val activity: Activity, val adapter: LoaderListAdapter) : AbsListView.MultiChoiceModeListener {
+class LoaderListSelectionMenu(val activity: Activity, private val adapter: LoaderListAdapter) : AbsListView.MultiChoiceModeListener {
 
     private val selected: MutableSet<Int> = mutableSetOf()
 

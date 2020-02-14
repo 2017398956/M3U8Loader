@@ -25,7 +25,6 @@ class Parser(val name: String, val url: String, val downloadPath: String) {
         try {
             stop = false
             val retList = mutableListOf<List>()
-
             val client = ClientBuilder.new(Uri.parse(url))
             clientEx = client
 

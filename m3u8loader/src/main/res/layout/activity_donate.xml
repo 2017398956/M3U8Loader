@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    tools:context="ru.yourok.m3u8loader.DonationActivity">
+    tools:context="ru.yourok.m3u8loader.activitys.DonateActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:autoLink="web|email"
-                android:text="8yourok8@gmail.com" />
+                android:text="2017398956@qq.com" />
         </LinearLayout>
 
         <View
@@ -61,7 +61,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -79,15 +80,18 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:text="Forum RUS: " />
 
             <TextView
@@ -102,7 +106,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -119,12 +124,13 @@
                 android:layout_height="wrap_content"
                 android:autoLink="web"
                 android:singleLine="true"
-                android:text="https://github.com/YouROK/M3U8Loader" />
+                android:text="https://github.com/2017398956/M3U8Loader" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -142,7 +148,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -165,12 +172,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
+        android:visibility="visible"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonDonWeChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onDonWeChatClick"
+                android:text="@string/pay_wechat" />
+
+            <Button
+                android:id="@+id/buttonDonAliPay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onDonAliPayClick"
+                android:text="@string/pay_alipay" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <Button
@@ -195,6 +228,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <Button

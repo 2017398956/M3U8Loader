@@ -282,8 +282,8 @@ class ACR private constructor(private val application: Application) : Thread.Unc
         try {
             val generator = Random()
             val random = generator.nextInt(99999)
-            val FileName = "stack-$random.stacktrace"
-            val trace = application.openFileOutput(FileName,
+            val fileName = "stack-$random.stacktrace"
+            val trace = application.openFileOutput(fileName,
                     Context.MODE_PRIVATE)
             trace.write(errorContent.toByteArray())
             trace.close()

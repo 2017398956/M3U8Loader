@@ -22,14 +22,17 @@ interface Client {
 
 object ClientBuilder {
     fun new(url: Uri): Client {
-        url.scheme ?: throw IOException("wrong url: " + url.toString())
-
-        if (url.scheme!!.startsWith("http", 0, true)) {
-            return Http(url)
-        } else if (url.scheme!!.startsWith("content", 0, true)) {
-            return Content(url)
-        } else {
-            return File(url)
+        url.scheme ?: throw IOException("wrong url: $url")
+        return when {
+            url.scheme!!.startsWith("http", 0, true) -> {
+                Http(url)
+            }
+            url.scheme!!.startsWith("content", 0, true) -> {
+                Content(url)
+            }
+            else -> {
+                File(url)
+            }
         }
     }
 }

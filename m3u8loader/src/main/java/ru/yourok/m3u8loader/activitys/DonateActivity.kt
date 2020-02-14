@@ -55,4 +55,7 @@ class DonateActivity : AppCompatActivity() {
         finish()
         Preferences.set("LastViewDonate", -1L)
     }
+
+    fun onDonWeChatClick(view: View) {}
+    fun onDonAliPayClick(view: View) {}
 }

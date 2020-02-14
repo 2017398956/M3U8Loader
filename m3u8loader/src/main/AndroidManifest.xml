@@ -15,6 +15,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:sharedUserId="ru.yourok.m3u8"
         android:supportsRtl="true"
@@ -55,21 +57,6 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
 
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:mimeType="video/m3u" />
-                <data android:mimeType="video/m3u8" />
-                <data android:mimeType="video/hls" />
-                <data android:mimeType="audio/mpegurl" />
-                <data android:mimeType="audio/x-mpegurl" />
-                <data android:mimeType="application/x-mpegurl" />
-                <data android:mimeType="application/vnd.apple.mpegurl" />
-                <data android:mimeType="video/mp2t" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
