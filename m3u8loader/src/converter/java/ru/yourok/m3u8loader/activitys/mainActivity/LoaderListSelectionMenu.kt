@@ -9,7 +9,7 @@ import android.widget.AbsListView
 import android.widget.ListView
 import android.widget.Toast
 import ru.yourok.converter.ConverterHelper
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.manager.Manager
 import ru.yourok.m3u8loader.R
 import ru.yourok.m3u8loader.activitys.editorActivity.EditorActivity
@@ -51,10 +51,10 @@ class LoaderListSelectionMenu(val activity: Activity, private val adapter: Loade
                     Toast.makeText(activity, R.string.warn_install_convertor, Toast.LENGTH_SHORT).show()
                     return false
                 }
-                val sendList = mutableListOf<List>()
+                val sendList = mutableListOf<DownloadInfo>()
                 selected.forEach {
                     Manager.getLoader(it)?.let {
-                        sendList.add(it.list)
+                        sendList.add(it.downloadInfo)
                     }
                 }
                 ConverterHelper.convert(sendList)
@@ -68,7 +68,7 @@ class LoaderListSelectionMenu(val activity: Activity, private val adapter: Loade
                         Manager.getLoader(it)?.let {
                             it.stop()
                             it.waitEnd()
-                            EditorActivity.editorList.add(it.list)
+                            EditorActivity.editorList.add(it.downloadInfo)
                         }
                     }
                     if (EditorActivity.editorList.size > 0)

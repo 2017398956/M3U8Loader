@@ -5,7 +5,7 @@ import androidx.appcompat.app.AlertDialog
 import ru.yourok.dwl.downloader.Downloader
 import ru.yourok.dwl.downloader.LoadState
 import ru.yourok.dwl.downloader.State
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.storage.Storage
 import ru.yourok.dwl.utils.Loader
 import ru.yourok.dwl.utils.Saver
@@ -36,9 +36,9 @@ object Manager {
         return null
     }
 
-    fun findLoader(list: List): Downloader? {
+    fun findLoader(downloadInfo: DownloadInfo): Downloader? {
         loaderList.forEach {
-            if (it.list.url + it.list.title == list.url + list.title)
+            if (it.downloadInfo.url + it.downloadInfo.title == downloadInfo.url + downloadInfo.title)
                 return it
         }
         return null
@@ -52,14 +52,21 @@ object Manager {
         return getLoader(i)?.getState()
     }
 
-    fun addList(list: MutableList<List>) {
+    /**
+     * 添加新的下载任务
+     */
+    fun addList(downloadInfo: MutableList<DownloadInfo>) {
         synchronized(loaderList) {
-            list.forEach {
+            downloadInfo.forEach {
                 var isFindUrl = false
                 loaderList.forEach { item ->
-                    if (it.url == item.list.url)
+                    // 检查是否已经添加过该下载任务
+                    if (it.url == item.downloadInfo.url) {
+                        // 这里虽然抛出异常，但是在调用的地方 try catch 了，并且弹出了 Toast
                         throw IOException(App.getContext().getString(R.string.error_same_url))
+                    }
                 }
+                // 如果没有添加过这个任务，则添加
                 if (!isFindUrl) {
                     //find equal url
                     val flist = loaderList.find { downloader ->
@@ -67,20 +74,20 @@ object Manager {
                     }
                     //replace urls if find eq
                     if (flist != null) {
-                        flist.list.url = it.url
-                        if (flist.list.items.size != it.items.size) {
-                            it.items = flist.list.items
+                        flist.downloadInfo.url = it.url
+                        if (flist.downloadInfo.downloadItems.size != it.downloadItems.size) {
+                            it.downloadItems = flist.downloadInfo.downloadItems
                         } else
-                            flist.list.items.forEachIndexed { index, item ->
-                                if (index < it.items.size)
-                                    item.url = it.items[index].url
+                            flist.downloadInfo.downloadItems.forEachIndexed { index, item ->
+                                if (index < it.downloadItems.size)
+                                    item.url = it.downloadItems[index].url
                             }
 
                     } else
                         loaderList.add(Downloader(it))
                 }
             }
-            list.forEach { Saver.saveList(it) }
+            downloadInfo.forEach { Saver.saveList(it) }
         }
     }
 
@@ -88,7 +95,7 @@ object Manager {
         synchronized(loaderList) {
             var isFile = false
             indexes.forEach {
-                if (File(loaderList[it].list.filePath).exists()) {
+                if (File(loaderList[it].downloadInfo.filePath).exists()) {
                     isFile = true
                     return@forEach
                 }
@@ -123,12 +130,12 @@ object Manager {
         //remove loaders
         delLoader.forEach {
             it.waitEnd()
-            Saver.removeList(it.list)
+            Saver.removeList(it.downloadInfo)
             loaderList.remove(it)
             if (withFile) {
-                Storage.getDocument(it.list.filePath).delete()
-                if (it.list.subsUrl.isNotEmpty())
-                    Storage.getDocument(File(File(it.list.filePath).parent, it.list.title + ".srt").canonicalPath)?.delete()
+                Storage.getDocument(it.downloadInfo.filePath).delete()
+                if (it.downloadInfo.subsUrl.isNotEmpty())
+                    Storage.getDocument(File(File(it.downloadInfo.filePath).parent, it.downloadInfo.title + ".srt").canonicalPath)?.delete()
             }
         }
 
@@ -146,7 +153,7 @@ object Manager {
         synchronized(loaderList) {
             var isFile = false
             loaderList.forEach {
-                if (File(it.list.filePath).exists()) {
+                if (File(it.downloadInfo.filePath).exists()) {
                     isFile = true
                     return@forEach
                 }
@@ -159,10 +166,10 @@ object Manager {
                                 stopAll()
                                 loaderList.forEach {
                                     it.waitEnd()
-                                    Saver.removeList(it.list)
-                                    Storage.getDocument(it.list.filePath).delete()
-                                    if (it.list.subsUrl.isNotEmpty())
-                                        Storage.getDocument(File(File(it.list.filePath).parent, it.list.title + ".srt").canonicalPath).delete()
+                                    Saver.removeList(it.downloadInfo)
+                                    Storage.getDocument(it.downloadInfo.filePath).delete()
+                                    if (it.downloadInfo.subsUrl.isNotEmpty())
+                                        Storage.getDocument(File(File(it.downloadInfo.filePath).parent, it.downloadInfo.title + ".srt").canonicalPath).delete()
                                 }
                                 loaderList.clear()
                             }
@@ -170,7 +177,7 @@ object Manager {
                                 stopAll()
                                 loaderList.forEach {
                                     it.waitEnd()
-                                    Saver.removeList(it.list)
+                                    Saver.removeList(it.downloadInfo)
                                 }
                                 loaderList.clear()
                             }
@@ -181,7 +188,7 @@ object Manager {
                 stopAll()
                 loaderList.forEach {
                     it.waitEnd()
-                    Saver.removeList(it.list)
+                    Saver.removeList(it.downloadInfo)
                 }
                 loaderList.clear()
             }
@@ -190,7 +197,7 @@ object Manager {
 
     fun saveLists() {
         try {
-            loaderList.forEach { Saver.saveList(it.list) }
+            loaderList.forEach { Saver.saveList(it.downloadInfo) }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -209,6 +216,9 @@ object Manager {
         return false
     }
 
+    /**
+     * 下载任务列表中的第 index 个任务
+     */
     fun load(index: Int) {
         if (index in 0 until loaderList.size) {
             if (loaderList[index].isComplete())
@@ -276,7 +286,7 @@ object Manager {
                         loading = false
                         queueList.clear()
                     }
-                    Saver.saveList(it.list)
+                    Saver.saveList(it.downloadInfo)
                 }
             }
             loading = false

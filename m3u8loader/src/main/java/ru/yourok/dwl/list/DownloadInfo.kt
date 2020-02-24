@@ -3,10 +3,10 @@ package ru.yourok.dwl.list
 import ru.yourok.dwl.settings.Settings
 
 /**
- * Created by yourok on 07.11.17.
+ * 下载信息
  */
-class List {
-    var items: MutableList<Item> = mutableListOf()
+class DownloadInfo {
+    var downloadItems: MutableList<DownloadItem> = mutableListOf()
     var url: String = ""
     var filePath: String = ""
     var bandwidth: Int = 0
@@ -16,7 +16,7 @@ class List {
     var subsUrl: String = ""
 }
 
-class Item {
+class DownloadItem {
     var index: Int = -1
     var url: String = ""
     var loaded: Long = 0

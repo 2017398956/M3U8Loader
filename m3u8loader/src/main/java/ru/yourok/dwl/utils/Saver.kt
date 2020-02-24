@@ -3,8 +3,8 @@ package ru.yourok.dwl.utils
 import android.util.Base64
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.yourok.dwl.list.Item
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadItem
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.settings.Settings
 import ru.yourok.m3u8loader.App
 import java.io.File
@@ -16,19 +16,19 @@ import java.io.FileOutputStream
 
 object Saver {
 
-    fun removeList(list: List) {
+    fun removeList(downloadInfo: DownloadInfo) {
         val path = App.getContext().filesDir?.path
-        val file = File(path, list.title + ".lst")
+        val file = File(path, downloadInfo.title + ".lst")
         if (file.exists())
             file.delete()
     }
 
-    fun saveList(list: List) {
+    fun saveList(downloadInfo: DownloadInfo) {
         try {
-            synchronized(list) {
-                val js = list2Json(list)
+            synchronized(downloadInfo) {
+                val js = list2Json(downloadInfo)
                 val path = App.getContext().filesDir?.path
-                val file = File(path, list.title + ".lst")
+                val file = File(path, downloadInfo.title + ".lst")
                 val str = js.toString(1)
                 val stream = FileOutputStream(file)
                 stream.write(str.toByteArray())
@@ -61,24 +61,24 @@ object Saver {
         }
     }
 
-    private fun list2Json(list: List): JSONObject {
+    private fun list2Json(downloadInfo: DownloadInfo): JSONObject {
         val js = JSONObject()
-        js.put("url", list.url)
-        js.put("filePath", list.filePath)
-        js.put("title", list.title)
-        js.put("bandwidth", list.bandwidth)
-        js.put("isConvert", list.isConvert)
-        js.put("isPlayed", list.isPlayed)
-        js.put("subsUrl", list.subsUrl)
-        js.put("items", items2Json(list.items))
+        js.put("url", downloadInfo.url)
+        js.put("filePath", downloadInfo.filePath)
+        js.put("title", downloadInfo.title)
+        js.put("bandwidth", downloadInfo.bandwidth)
+        js.put("isConvert", downloadInfo.isConvert)
+        js.put("isPlayed", downloadInfo.isPlayed)
+        js.put("subsUrl", downloadInfo.subsUrl)
+        js.put("items", items2Json(downloadInfo.downloadItems))
 
         return js
     }
 
-    private fun items2Json(items: kotlin.collections.List<Item>): JSONArray {
+    private fun items2Json(downloadItems: kotlin.collections.List<DownloadItem>): JSONArray {
         val jsarr = JSONArray()
 
-        items.forEach {
+        downloadItems.forEach {
             val js = JSONObject()
             js.put("index", it.index)
             js.put("url", it.url)

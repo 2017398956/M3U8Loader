@@ -10,8 +10,8 @@ import ru.yourok.dwl.client.Client
 import ru.yourok.dwl.client.ClientBuilder
 import ru.yourok.dwl.client.Util
 import ru.yourok.dwl.list.EncKey
-import ru.yourok.dwl.list.Item
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadItem
+import ru.yourok.dwl.list.DownloadInfo
 import java.io.IOException
 
 /**
@@ -21,18 +21,18 @@ class ParseMedia(val downloadPath: String) {
     var stop = false
     var error = ""
 
-    fun parse(list: List): MutableList<List> {
-        val client = ClientBuilder.new(Uri.parse(list.url))
+    fun parse(downloadInfo: DownloadInfo): MutableList<DownloadInfo> {
+        val client = ClientBuilder.new(Uri.parse(downloadInfo.url))
         client.connect()
         val parser = PlaylistParser(client.getInputStream(), Format.EXT_M3U, Encoding.UTF_8, ParsingMode.LENIENT)
         val playList = parser.parse()
         client.close()
-        val retList = mutableListOf<List>()
+        val retList = mutableListOf<DownloadInfo>()
 
         if (playList.hasMediaPlaylist()) {
-            val listUri = Uri.parse(list.url)
+            val listUri = Uri.parse(downloadInfo.url)
             playList.mediaPlaylist.tracks.forEachIndexed { index, trackData ->
-                val itm = Item()
+                val itm = DownloadItem()
                 itm.index = index
                 itm.isLoad = true
                 itm.url = Util.concatUriList(listUri, trackData.uri.toString())
@@ -51,10 +51,10 @@ class ParseMedia(val downloadPath: String) {
                     val name = if (!trackData.trackInfo.title.isNullOrEmpty())
                         trackData.trackInfo.title
                     else
-                        list.title
+                        downloadInfo.title
                     retList.addAll(Parser(name, itm.url, downloadPath).parse())
                 } else {
-                    list.items.add(itm)
+                    downloadInfo.downloadItems.add(itm)
                     if (stop)
                         return retList
                 }

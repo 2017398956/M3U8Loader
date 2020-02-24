@@ -39,7 +39,7 @@ class PlayIntent(val context: Context) {
                 val pm = context.getPackageManager()
                 if (intent.resolveActivity(pm) != null) {
                     context.startActivity(intent)
-                    loader.list.isPlayed = true
+                    loader.downloadInfo.isPlayed = true
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

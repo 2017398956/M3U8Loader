@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.materialdrawer.Drawer
+import dalvik.system.DexClassLoader
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.yourok.dwl.downloader.LoadState
 import ru.yourok.dwl.manager.Manager
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Theme.set(this)
+
         setContentView(R.layout.activity_main)
         requestPermissionWithRationale()
         listViewLoader.adapter = LoaderListAdapter(this)
@@ -114,7 +116,7 @@ class MainActivity : AppCompatActivity() {
                 Thread.sleep(500)
             }
             // 为了防止最后刷新后下载任务完成导致状态没有更新，这里再次刷新一下
-            runOnUiThread{update()}
+            runOnUiThread { update() }
             // TODO 取消通知栏的下载进度
         }
     }
@@ -143,12 +145,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.i("NFL" , "requestCode $requestCode")
+        Log.i("NFL", "requestCode $requestCode")
         if (requestCode == PreferenceActivity.Result && PreferenceActivity.changTheme) {
             Theme.changeNow(this, Preferences.get("ThemeDark", true) as Boolean)
         }
     }
-
 
 
     private fun requestPermissionWithRationale() {

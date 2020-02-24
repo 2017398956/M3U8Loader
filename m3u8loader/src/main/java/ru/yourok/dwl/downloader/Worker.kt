@@ -2,7 +2,7 @@ package ru.yourok.dwl.downloader
 
 import android.net.Uri
 import ru.yourok.dwl.client.ClientBuilder
-import ru.yourok.dwl.list.Item
+import ru.yourok.dwl.list.DownloadItem
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -10,31 +10,31 @@ import java.io.IOException
 /**
  * Created by yourok on 10.11.17.
  */
-class Worker(val item: Item, private val stat: DownloadStatus, private val file: FileWriter) : Runnable {
+class Worker(val downloadItem: DownloadItem, private val stat: DownloadStatus, private val file: FileWriter) : Runnable {
     private var stop = false
 
     override fun run() {
-        if (item.isComplete)
+        if (downloadItem.isComplete)
             return
         stat.isLoading = true
         stop = false
         var isCompleteLoad = false
-        var isMemWrite = item.encData != null
+        var isMemWrite = downloadItem.encData != null
         val buffer = ByteArray(32767)
         val accumBuffer = ByteArrayOutputStream()
         val speed = Speed(stat)
 
-        if (item.loaded >= item.size && item.loaded > 0)
-            item.loaded--
+        if (downloadItem.loaded >= downloadItem.size && downloadItem.loaded > 0)
+            downloadItem.loaded--
 
-        val client = ClientBuilder.new(Uri.parse(item.url))
+        val client = ClientBuilder.new(Uri.parse(downloadItem.url))
 
         try {
-            if (client.connect(item.loaded) == -1L) {
-                item.loaded = 0
+            if (client.connect(downloadItem.loaded) == -1L) {
+                downloadItem.loaded = 0
                 isMemWrite = true
             }
-            item.size = client.getSize()
+            downloadItem.size = client.getSize()
             stat.Clear()
             speed.startRead()
             while (!stop) {
@@ -46,24 +46,24 @@ class Worker(val item: Item, private val stat: DownloadStatus, private val file:
                 speed.measure(readCount)
                 accumBuffer.write(buffer, 0, readCount)
                 if (!isMemWrite) {
-                    if (accumBuffer.size() > 65536 && file.write(item, accumBuffer)) {
-                        item.loaded += accumBuffer.size().toLong()
+                    if (accumBuffer.size() > 65536 && file.write(downloadItem, accumBuffer)) {
+                        downloadItem.loaded += accumBuffer.size().toLong()
                         accumBuffer.reset()
                     }
                 } else
-                    item.loaded = accumBuffer.size().toLong()
+                    downloadItem.loaded = accumBuffer.size().toLong()
             }
             speed.stopRead()
             if (!isMemWrite && accumBuffer.size() > 0) {
-                if (file.write(item, accumBuffer)) {
-                    item.loaded += accumBuffer.size()
+                if (file.write(downloadItem, accumBuffer)) {
+                    downloadItem.loaded += accumBuffer.size()
                     accumBuffer.reset()
                 }
             }
         } catch (e: Exception) {
             client.close()
             if (isMemWrite)
-                item.loaded = 0
+                downloadItem.loaded = 0
             throw e
         } finally {
             client.close()
@@ -71,14 +71,14 @@ class Worker(val item: Item, private val stat: DownloadStatus, private val file:
 
         if (isCompleteLoad) {
             if (isMemWrite) {
-                if (item.encData != null)
-                    stat.buffer = item.encData!!.decrypt(accumBuffer.toByteArray())
+                if (downloadItem.encData != null)
+                    stat.buffer = downloadItem.encData!!.decrypt(accumBuffer.toByteArray())
                 else
                     stat.buffer = accumBuffer.toByteArray()
                 accumBuffer.reset()
                 stat.buffer?.let {
                     if (it.isNotEmpty()) {
-                        item.size = stat.buffer!!.size.toLong()
+                        downloadItem.size = stat.buffer!!.size.toLong()
                         file.write()
                     }
                 }
@@ -87,8 +87,8 @@ class Worker(val item: Item, private val stat: DownloadStatus, private val file:
                     var writeOk = false
                     var errs = 0
                     while (!writeOk) {
-                        if (file.write(item, accumBuffer)) {
-                            item.loaded += accumBuffer.size()
+                        if (file.write(downloadItem, accumBuffer)) {
+                            downloadItem.loaded += accumBuffer.size()
                             accumBuffer.reset()
                             writeOk = true
                         } else {
@@ -99,16 +99,16 @@ class Worker(val item: Item, private val stat: DownloadStatus, private val file:
                         }
                     }
                     if (!writeOk) {
-                        item.loaded = 0
+                        downloadItem.loaded = 0
                         throw IOException("write before end")
                     }
-                    item.size = item.loaded
+                    downloadItem.size = downloadItem.loaded
                 }
-                item.isComplete = true
+                downloadItem.isComplete = true
             }
         } else {
             if (isMemWrite)
-                item.loaded = 0
+                downloadItem.loaded = 0
         }
     }
 

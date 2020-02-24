@@ -1,1 +1,1 @@
-include ':m3u8loader',':crystalrangeseekbar',':videokit'
+include ':m3u8loader',':crystalrangeseekbar',':videokit', ':open_m3u8'

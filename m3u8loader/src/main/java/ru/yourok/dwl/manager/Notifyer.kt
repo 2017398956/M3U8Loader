@@ -5,13 +5,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import android.widget.Toast
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.m3u8loader.App
 import ru.yourok.m3u8loader.R
 import ru.yourok.m3u8loader.activitys.mainActivity.MainActivity
@@ -123,14 +122,14 @@ object Notifyer {
 
     var error: String = ""
 
-    fun toastEnd(list: List, complete: Boolean, err: String) {
+    fun toastEnd(downloadInfo: DownloadInfo, complete: Boolean, err: String) {
         error = err
         with(App.getContext()) {
             Handler(Looper.getMainLooper()).post {
                 if (complete && err.isEmpty()) {
-                    Toast.makeText(this, this.getText(R.string.complete).toString() + ": " + list.title, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getText(R.string.complete).toString() + ": " + downloadInfo.title, Toast.LENGTH_SHORT).show()
                 } else if (!err.isEmpty()) {
-                    Toast.makeText(this, this.getText(R.string.error).toString() + ": " + list.title + ", " + err, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getText(R.string.error).toString() + ": " + downloadInfo.title + ", " + err, Toast.LENGTH_SHORT).show()
                 }
             }
         }

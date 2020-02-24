@@ -2,7 +2,7 @@ package ru.yourok.dwl.downloader
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import ru.yourok.dwl.list.Item
+import ru.yourok.dwl.list.DownloadItem
 import ru.yourok.dwl.storage.Storage
 import ru.yourok.dwl.writer.NativeFile
 import ru.yourok.dwl.writer.UriFile
@@ -74,40 +74,40 @@ class FileWriter(fileName: String) {
 
     private fun getRangeStart(): Int {
         workers.forEach {
-            if (it.first.item.isLoad)
-                return it.first.item.index
+            if (it.first.downloadItem.isLoad)
+                return it.first.downloadItem.index
         }
         return 0
     }
 
     private fun getRangeEnd(): Int {
         workers.asReversed().forEach {
-            if (it.first.item.isLoad)
-                return it.first.item.index
+            if (it.first.downloadItem.isLoad)
+                return it.first.downloadItem.index
         }
         return workers.size
     }
 
     private fun getWorkerSize(i: Int): Long {
         workers.forEach {
-            if (it.first.item.index == i)
-                return it.first.item.size
+            if (it.first.downloadItem.index == i)
+                return it.first.downloadItem.size
         }
         return -1
     }
 
-    fun write(item: Item, buf: ByteArrayOutputStream): Boolean {
+    fun write(downloadItem: DownloadItem, buf: ByteArrayOutputStream): Boolean {
         synchronized(lock) {
             var off = 0L
             val start = getRangeStart()
-            val end = item.index
+            val end = downloadItem.index
             for (i in start until end) {
                 val sz = getWorkerSize(i)
                 if (sz <= 0L)
                     return false
                 off += sz
             }
-            off += item.loaded
+            off += downloadItem.loaded
             write(buf.toByteArray(), off)
             return true
         }
@@ -118,14 +118,14 @@ class FileWriter(fileName: String) {
             var off = 0L
 
             workers.forEach {
-                if (it.first.item.size == 0L)
+                if (it.first.downloadItem.size == 0L)
                     return
                 if (it.second.buffer != null) {
                     write(it.second.buffer!!, off)
                     it.second.buffer = null
-                    it.first.item.isComplete = true
+                    it.first.downloadItem.isComplete = true
                 }
-                off += it.first.item.size
+                off += it.first.downloadItem.size
             }
         }
     }

@@ -4,14 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_add_list.*
 import ru.yourok.converter.ConverterHelper
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.manager.Manager
 import ru.yourok.dwl.manager.Notifyer
 import ru.yourok.dwl.parser.Parser
@@ -27,7 +26,8 @@ import kotlin.concurrent.thread
 
 class AddListActivity : AppCompatActivity() {
 
-    private var list: MutableList<List>? = null
+    private var downloadInfo: MutableList<DownloadInfo>? = null
+    // 下载文件保存目录
     private var downloadPath = Settings.downloadPath
     private var showNotify = false
 
@@ -83,14 +83,14 @@ class AddListActivity : AppCompatActivity() {
                     for (i in 0 until Manager.getLoadersSize()) {
                         val info = Manager.getLoaderStat(i) ?: continue
                         val name = info.name
-                        if (name == "video" + count) {
+                        if (name == "video$count") {
                             count++
                             found = true
                             break
                         }
                     }
                 }
-                editTextFileName.setText("video" + count)
+                editTextFileName.setText("video$count")
             }
 
         } catch (e: Exception) {

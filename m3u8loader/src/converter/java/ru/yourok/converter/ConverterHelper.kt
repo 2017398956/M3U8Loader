@@ -1,6 +1,6 @@
 package ru.yourok.converter
 
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.m3u8converter.converter.Manager
 import ru.yourok.m3u8loader.App
 
@@ -14,16 +14,16 @@ object ConverterHelper {
         return true
     }
 
-    fun getCurrentConvert(): List? {
+    fun getCurrentConvert(): DownloadInfo? {
         return Manager.getCurrent()
     }
 
-    fun isConvert(list: List): Boolean {
-        return Manager.contain(list)
+    fun isConvert(downloadInfo: DownloadInfo): Boolean {
+        return Manager.contain(downloadInfo)
     }
 
-    fun convert(list: kotlin.collections.List<List>) {
-        list.forEach {
+    fun convert(downloadInfo: kotlin.collections.List<DownloadInfo>) {
+        downloadInfo.forEach {
             Manager.add(it)
         }
     }

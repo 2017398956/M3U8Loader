@@ -20,14 +20,14 @@ import ru.yourok.m3u8loader.R
  * Created by yourok on 01.12.17.
  */
 
-class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Context) : BaseAdapter() {
+class EditorAdaptor(val downloadInfos: List<ru.yourok.dwl.list.DownloadInfo>, val context: Context) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, p2: ViewGroup?): View {
         val view: View = convertView
                 ?: (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.editor_list_adaptor, null)
         view.isEnabled = false
         view.setOnClickListener(null)
 
-        val list = lists[position]
+        val list = downloadInfos[position]
         list.let { list ->
 
             view.findViewById<TextView>(R.id.textViewUrlItem).text = list.url
@@ -36,12 +36,12 @@ class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Conte
             val textViewInfo = view.findViewById<TextView>(R.id.textViewItemsInfo)
 
             val rangeBar = view.findViewById<CrystalRangeSeekbar>(R.id.rangeBar)
-            rangeBar.setMaxValue((list.items.size).toFloat())
+            rangeBar.setMaxValue((list.downloadItems.size).toFloat())
             var start = 0
             var isStart = false
-            var end = list.items.size
+            var end = list.downloadItems.size
             var isEnd = false
-            list.items.forEachIndexed { index, item ->
+            list.downloadItems.forEachIndexed { index, item ->
                 if (!isStart && item.isLoad) {
                     start = index
                     isStart = true
@@ -55,9 +55,9 @@ class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Conte
             }
 
             if (start < 0) start = 0
-            if (start > list.items.size) start = list.items.size
+            if (start > list.downloadItems.size) start = list.downloadItems.size
             if (end < 0) end = 0
-            if (end > list.items.size) end = list.items.size
+            if (end > list.downloadItems.size) end = list.downloadItems.size
 
             rangeBar.setMinStartValue(start.toFloat())
             rangeBar.setMaxStartValue(end.toFloat())
@@ -70,7 +70,7 @@ class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Conte
                 var allD = 0F
                 var loadedSize = 0L
                 var allSize = 0L
-                list.items.forEachIndexed { index, item ->
+                list.downloadItems.forEachIndexed { index, item ->
                     item.isLoad = index >= minValue.toInt() && index < maxValue.toInt()
                     if (index < minValue.toInt())
                         startD += item.duration
@@ -84,7 +84,7 @@ class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Conte
                     allSize += item.size
                 }
 
-                var info = "[ $minValue .. $maxValue ]  ${list.items.size}\n" +
+                var info = "[ $minValue .. $maxValue ]  ${list.downloadItems.size}\n" +
                         "[ ${Utils.durationFmt(startD)} .. ${Utils.durationFmt(endD)} ]  ${Utils.durationFmt(betweenD)} / ${Utils.durationFmt(allD)}"
 
                 if (loadedSize > 0 && allSize > 0)
@@ -101,7 +101,7 @@ class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Conte
                 builder.setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener { dialogInterface, i ->
                     loader?.clear()
                     list.isPlayed = false
-                    list.items.forEach {
+                    list.downloadItems.forEach {
                         it.isComplete = false
                         it.loaded = 0
                     }
@@ -116,7 +116,7 @@ class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Conte
     }
 
     override fun getItem(p0: Int): Any {
-        return lists[p0]
+        return downloadInfos[p0]
     }
 
     override fun getItemId(p0: Int): Long {
@@ -124,6 +124,6 @@ class EditorAdaptor(val lists: List<ru.yourok.dwl.list.List>, val context: Conte
     }
 
     override fun getCount(): Int {
-        return lists.size
+        return downloadInfos.size
     }
 }

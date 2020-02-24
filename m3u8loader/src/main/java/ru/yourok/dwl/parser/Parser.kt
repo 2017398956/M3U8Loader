@@ -1,10 +1,11 @@
 package ru.yourok.dwl.parser
 
 import android.net.Uri
+import android.util.Log
 import com.iheartradio.m3u8.*
 import ru.yourok.dwl.client.Client
 import ru.yourok.dwl.client.ClientBuilder
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.settings.Settings
 import ru.yourok.dwl.utils.Utils
 import java.io.ByteArrayInputStream
@@ -20,15 +21,15 @@ class Parser(val name: String, val url: String, val downloadPath: String) {
     var stop = false
     var parseMedia: ParseMedia? = null
 
-    fun parse(): MutableList<List> {
+    fun parse(): MutableList<DownloadInfo> {
         var clientEx: Client? = null
         try {
             stop = false
-            val retList = mutableListOf<List>()
+            val retList = mutableListOf<DownloadInfo>()
             val client = ClientBuilder.new(Uri.parse(url))
             clientEx = client
-
-            for (i in 0..Settings.errorRepeat)
+            // 尝试网络连接
+            for (i in 0..Settings.errorRepeat) {
                 try {
                     client.connect()
                     break
@@ -37,28 +38,29 @@ class Parser(val name: String, val url: String, val downloadPath: String) {
                         throw e
                     }
                 }
-
+            }
             val chkBuf = ByteArray(40)
             val chkSz = client.getInputStream()?.read(chkBuf) ?: 0
-            if (chkSz != 0 && !Utils.isTextBuffer(chkBuf))
+            if (chkSz != 0 && !Utils.isTextBuffer(chkBuf)) {
                 throw java.text.ParseException("m3u8 list contains wrong characters: " + chkBuf.toString(Charset.defaultCharset()), -1)
-
+            }
             var listStr = client.getInputStream()?.bufferedReader()?.readText() ?: ""
-            if (listStr.isNotEmpty())
+            if (listStr.isNotEmpty()) {
                 listStr = chkBuf.toString(Charset.defaultCharset()) + listStr
+            }
             client.close()
 
             listStr = listStr.split("\n").filter { it.isNotEmpty() }.joinToString("\n")
 
-            val parser = PlaylistParser(ByteArrayInputStream(listStr.toByteArray()), Format.EXT_M3U, Encoding.UTF_8, ParsingMode.LENIENT)
-            val playList = parser.parse()
+            val m3u8PlaylistParser = PlaylistParser(ByteArrayInputStream(listStr.toByteArray()), Format.EXT_M3U, Encoding.UTF_8, ParsingMode.LENIENT)
+            val m3u8Playlist = m3u8PlaylistParser.parse()
 
-            if (playList.hasMasterPlaylist()) {
-                val mList = ParseMaster().parse(Uri.parse(client.getUrl()), playList.masterPlaylist)
+            if (m3u8Playlist.hasMasterPlaylist()) {
+                val mList = ParseMaster().parse(Uri.parse(client.getUrl()), m3u8Playlist.masterPlaylist)
                 retList.addAll(mList)
             }
-            if (playList.hasMediaPlaylist()) {
-                val list = List()
+            if (m3u8Playlist.hasMediaPlaylist()) {
+                val list = DownloadInfo()
                 list.url = client.getUrl()
                 list.title = name
                 retList.add(list)
@@ -74,7 +76,7 @@ class Parser(val name: String, val url: String, val downloadPath: String) {
                 list.filePath = File(downloadPath, Utils.cleanFileName(list.title) + ".mp4").canonicalPath
                 parseMedia = ParseMedia(downloadPath)
                 retList.addAll(parseMedia!!.parse(list))
-                if (list.items.size == 0) {
+                if (list.downloadItems.size == 0) {
                     retList.remove(list)
                 }
                 if (stop) break

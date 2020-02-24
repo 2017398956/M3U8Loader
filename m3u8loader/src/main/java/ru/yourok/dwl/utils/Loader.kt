@@ -3,8 +3,8 @@ package ru.yourok.dwl.utils
 import android.util.Base64
 import org.json.JSONObject
 import ru.yourok.dwl.list.EncKey
-import ru.yourok.dwl.list.Item
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadItem
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.settings.Settings
 import ru.yourok.m3u8loader.App
 import java.io.File
@@ -47,9 +47,9 @@ object Loader {
         }
     }
 
-    fun loadLists(): MutableList<List>? {
+    fun loadLists(): MutableList<DownloadInfo>? {
         try {
-            val lists: MutableList<List> = mutableListOf()
+            val downloadInfos: MutableList<DownloadInfo> = mutableListOf()
             val path = App.getContext().filesDir
             if (path != null)
                 path.walk().forEach {
@@ -57,27 +57,27 @@ object Loader {
                         if (it.isFile) {
                             try {
                                 val list = loadList(it.canonicalPath)
-                                lists.add(list)
+                                downloadInfos.add(list)
                             } catch (e: Exception) {
                                 it.delete()
                             }
                         }
                     }
                 }
-            return lists
+            return downloadInfos
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
     }
 
-    private fun loadList(filePath: String): List {
+    private fun loadList(filePath: String): DownloadInfo {
         val file = File(filePath)
         val stream = FileInputStream(file)
         val str = stream.bufferedReader().use { it.readText() }
         stream.close()
         val js = JSONObject(str)
-        val list = List()
+        val list = DownloadInfo()
         list.url = js.getString("url")
         list.filePath = js.getString("filePath")
         list.title = js.getString("title")
@@ -87,7 +87,7 @@ object Loader {
         list.subsUrl = js.get("subsUrl", "")
         val jsarr = js.getJSONArray("items")
         for (i in 0 until jsarr.length()) {
-            val itm = Item()
+            val itm = DownloadItem()
             val jsitm = jsarr.getJSONObject(i)
             itm.index = jsitm.getInt("index")
             itm.url = jsitm.getString("url")
@@ -108,7 +108,7 @@ object Loader {
                 val iv = Base64.decode(ivStr, Base64.NO_PADDING or Base64.NO_WRAP)
                 itm.encData!!.iv = iv
             }
-            list.items.add(itm)
+            list.downloadItems.add(itm)
         }
         return list
     }

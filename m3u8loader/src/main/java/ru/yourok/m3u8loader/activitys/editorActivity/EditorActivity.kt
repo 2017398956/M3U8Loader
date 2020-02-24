@@ -3,7 +3,7 @@ package ru.yourok.m3u8loader.activitys.editorActivity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_editor.*
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.utils.Saver
 import ru.yourok.m3u8loader.R
 import ru.yourok.m3u8loader.theme.Theme
@@ -14,7 +14,7 @@ import ru.yourok.m3u8loader.theme.Theme
 class EditorActivity : AppCompatActivity() {
 
     companion object {
-        var editorList = mutableListOf<List>()
+        var editorList = mutableListOf<DownloadInfo>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

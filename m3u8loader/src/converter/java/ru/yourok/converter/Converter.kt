@@ -3,7 +3,7 @@ package ru.yourok.converter
 import androidx.core.content.ContextCompat
 import processing.ffmpeg.videokit.LogLevel
 import processing.ffmpeg.videokit.VideoKit
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.storage.Storage
 import ru.yourok.m3u8loader.App
 import java.io.File
@@ -18,9 +18,9 @@ import java.io.IOException
 
 object Converter {
 
-    fun convert(list: List): String {
+    fun convert(downloadInfo: DownloadInfo): String {
         try {
-            val inFile = list.filePath
+            val inFile = downloadInfo.filePath
             if (!File(inFile).exists())
                 throw IOException("file not found or permission denied: " + inFile)
             if (!File(inFile).canRead())
@@ -40,15 +40,15 @@ object Converter {
                     .build()
             val res = command.execute()
             if (res.code != 0)
-                return "Error convert ${list.title}: ${res.code}"
-            return moveFile(outFile.canonicalPath, list)
+                return "Error convert ${downloadInfo.title}: ${res.code}"
+            return moveFile(outFile.canonicalPath, downloadInfo)
         } catch (e: Exception) {
             e.printStackTrace()
-            return "Error convert ${list.title}: " + e.message
+            return "Error convert ${downloadInfo.title}: " + e.message
         }
     }
 
-    private fun moveFile(converted: String, dst: List): String {
+    private fun moveFile(converted: String, dst: DownloadInfo): String {
         try {
             val toName = File(dst.filePath).name
 

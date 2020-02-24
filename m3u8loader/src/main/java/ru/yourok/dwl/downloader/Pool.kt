@@ -40,7 +40,7 @@ class Pool(private val workers: List<Pair<Worker, DownloadStatus>>) {
                 var priorityIndex = -1
                 workers.forEach { item ->
                     val wrk = item.first
-                    if (wrk.item.isComplete)
+                    if (wrk.downloadItem.isComplete)
                         return@forEach
                     val dstat = item.second
                     if (stop || !error.isEmpty())
@@ -52,7 +52,7 @@ class Pool(private val workers: List<Pair<Worker, DownloadStatus>>) {
                         Thread.currentThread().priority = Thread.MIN_PRIORITY
                         for (i in 0..Settings.errorRepeat)
                             try {
-                                if (!wrk.item.isComplete && !stop) {
+                                if (!wrk.downloadItem.isComplete && !stop) {
                                     wrk.run()
                                     Runtime.getRuntime().gc()
                                     dstat.isError = false
@@ -63,13 +63,13 @@ class Pool(private val workers: List<Pair<Worker, DownloadStatus>>) {
                                 dstat.isError = true
                                 if (i == Settings.errorRepeat) {
                                     error = (e.message
-                                            ?: "Error, read or connect") + " " + wrk.item.url + " " + wrk.item.index
+                                            ?: "Error, read or connect") + " " + wrk.downloadItem.url + " " + wrk.downloadItem.index
                                     onError?.invoke(error)
                                 }
                             } catch (e: SocketTimeoutException) {
                                 dstat.isError = true
                                 if (i == Settings.errorRepeat) {
-                                    error = "Error, connection timeout on load item " + wrk.item.index
+                                    error = "Error, connection timeout on load item " + wrk.downloadItem.index
                                     onError?.invoke(error)
                                 }
                             } catch (e: Exception) {

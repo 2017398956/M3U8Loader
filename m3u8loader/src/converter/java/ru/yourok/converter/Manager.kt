@@ -4,7 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import ru.yourok.converter.Converter
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.manager.Notifyer
 import ru.yourok.m3u8loader.App
 import ru.yourok.m3u8loader.R
@@ -16,35 +16,35 @@ import kotlin.concurrent.thread
  */
 object Manager {
     @Volatile
-    private var convList: MutableList<List> = mutableListOf()
+    private var convDownloadInfo: MutableList<DownloadInfo> = mutableListOf()
     private val lock = Any()
     private var converting = false
-    private var currentConvert: List? = null
+    private var currentConvert: DownloadInfo? = null
 
-    fun add(item: List) {
-        synchronized(convList) {
-            if (!convList.contains(item))
-                convList.add(item)
+    fun add(item: DownloadInfo) {
+        synchronized(convDownloadInfo) {
+            if (!convDownloadInfo.contains(item))
+                convDownloadInfo.add(item)
         }
     }
 
-    fun getCurrent(): List? {
+    fun getCurrent(): DownloadInfo? {
         return currentConvert
     }
 
-    fun contain(item: List): Boolean {
-        synchronized(convList) {
-            return (convList.contains(item))
+    fun contain(item: DownloadInfo): Boolean {
+        synchronized(convDownloadInfo) {
+            return (convDownloadInfo.contains(item))
         }
     }
 
     fun clear() {
-        synchronized(convList) {
-            convList.clear()
+        synchronized(convDownloadInfo) {
+            convDownloadInfo.clear()
         }
     }
 
-    fun startConvert(onEndConvertList: ((list: List?) -> Unit)?) {
+    fun startConvert(onEndConvertList: ((downloadInfo: DownloadInfo?) -> Unit)?) {
         synchronized(lock) {
             if (converting)
                 return
@@ -52,9 +52,9 @@ object Manager {
         }
         thread {
             val errors = mutableListOf<String>()
-            while (convList.size > 0 && converting) {
-                synchronized(convList) {
-                    currentConvert = convList[0]
+            while (convDownloadInfo.size > 0 && converting) {
+                synchronized(convDownloadInfo) {
+                    currentConvert = convDownloadInfo[0]
                 }
                 currentConvert?.let {
                     Notifyer.sendNotification(App.getContext(), Notifyer.TYPE_NOTIFYCONVERT, App.getContext().getString(R.string.converting), it.title, -1)
@@ -68,8 +68,8 @@ object Manager {
                             Toast.makeText(App.getContext(), "Converted: " + it.title, Toast.LENGTH_SHORT).show()
                     }
                 }
-                synchronized(convList) {
-                    convList.removeAt(0)
+                synchronized(convDownloadInfo) {
+                    convDownloadInfo.removeAt(0)
                 }
             }
             onEndConvertList?.invoke(null)

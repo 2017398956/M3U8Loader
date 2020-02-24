@@ -115,10 +115,11 @@ class Http(url: Uri) : Client {
 
     override fun getInputStream(): InputStream? {
         if (inputStream == null && connection != null) {
-            if ("gzip".equals(connection?.getContentEncoding()))
-                inputStream = GZIPInputStream(connection!!.getInputStream())
-            else
-                inputStream = connection!!.getInputStream()
+            inputStream = if ("gzip" == connection?.contentEncoding) {
+                GZIPInputStream(connection!!.inputStream)
+            } else {
+                connection!!.inputStream
+            }
         }
 
         return inputStream

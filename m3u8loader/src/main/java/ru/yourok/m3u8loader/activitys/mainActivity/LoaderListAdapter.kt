@@ -32,7 +32,7 @@ class LoaderListAdapter(val context: Context) : BaseAdapter() {
         val vi: View = convertView
                 ?: (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.loader_list_adaptor, null)
         Manager.getLoader(index)?.let {
-            vi.findViewById<TextView>(R.id.textViewNameItem).setText(it.list.title)
+            vi.findViewById<TextView>(R.id.textViewNameItem).setText(it.downloadInfo.title)
             val imgStatus = vi.findViewById<ImageView>(R.id.imageViewLoader)
             val state = it.getState()
             when {
@@ -52,7 +52,7 @@ class LoaderListAdapter(val context: Context) : BaseAdapter() {
                     imgStatus.setImageResource(R.drawable.ic_report_problem_black_24dp)
                 }
             }
-            if (ConverterHelper.isConvert(it.list)) {
+            if (ConverterHelper.isConvert(it.downloadInfo)) {
                 imgStatus.setImageResource(R.drawable.ic_convert_black)
             }
 

@@ -6,7 +6,7 @@ import android.os.Looper
 import android.widget.Toast
 import ru.yourok.converter.ConverterHelper
 import ru.yourok.dwl.client.ClientBuilder
-import ru.yourok.dwl.list.List
+import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.manager.Notifyer
 import ru.yourok.dwl.settings.Settings
 import ru.yourok.dwl.storage.Storage
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by yourok on 09.11.17.
  */
-class Downloader(val list: List) {
+class Downloader(val downloadInfo: DownloadInfo) {
     private var pool: Pool? = null
     private var workers: kotlin.collections.List<Pair<Worker, DownloadStatus>>? = null
     private var executor: ExecutorService? = null
@@ -36,7 +36,7 @@ class Downloader(val list: List) {
 
     init {
         var ncomp = true
-        list.items.forEach {
+        downloadInfo.downloadItems.forEach {
             if (!it.isComplete) {
                 ncomp = false
                 return@forEach
@@ -60,7 +60,7 @@ class Downloader(val list: List) {
 
                 loadSubtitles()
 
-                val file = FileWriter(list.filePath)
+                val file = FileWriter(downloadInfo.filePath)
                 var resize = true
                 var size = 0L
                 workers = null
@@ -70,7 +70,7 @@ class Downloader(val list: List) {
                 }
                 preloadSize(file)
                 val tmpWorkers = mutableListOf<Pair<Worker, DownloadStatus>>()
-                list.items.forEach {
+                downloadInfo.downloadItems.forEach {
                     if (it.isLoad) {
                         val stat = DownloadStatus()
                         val wrk = Worker(it, stat, file)
@@ -83,7 +83,7 @@ class Downloader(val list: List) {
                 if (resize)
                     file.resize(size)
 
-                tmpWorkers.sortBy { it.first.item.index }
+                tmpWorkers.sortBy { it.first.downloadItem.index }
                 workers = tmpWorkers.toList()
 
                 file.setWorkers(workers!!)
@@ -91,35 +91,35 @@ class Downloader(val list: List) {
                     isLoading = false
                     return@synchronized
                 }
-                list.isPlayed = false
+                downloadInfo.isPlayed = false
                 pool = Pool(workers!!)
                 pool!!.start()
                 pool!!.onEnd {
                     complete = true
                     workers!!.forEach {
-                        if (!it.first.item.isComplete)
+                        if (!it.first.downloadItem.isComplete)
                             complete = false
                     }
 
                     if (!resize && complete) {
                         size = 0L
                         workers!!.forEach {
-                            size += it.first.item.size
+                            size += it.first.downloadItem.size
                         }
                         file.resize(size)
                     }
                     file.close()
-                    Saver.saveList(list)
+                    Saver.saveList(downloadInfo)
                     isLoading = false
-                    if (complete && list.isConvert) {
-                        ConverterHelper.convert(mutableListOf(list))
+                    if (complete && downloadInfo.isConvert) {
+                        ConverterHelper.convert(mutableListOf(downloadInfo))
                         ConverterHelper.startConvert()
                     }
-                    Notifyer.toastEnd(list, complete, error)
+                    Notifyer.toastEnd(downloadInfo, complete, error)
                 }
 
                 pool!!.onFinishWorker {
-                    Saver.saveList(list)
+                    Saver.saveList(downloadInfo)
                 }
                 pool!!.onError {
                     error = it
@@ -157,14 +157,14 @@ class Downloader(val list: List) {
 
     fun getState(): State {
         val state = State()
-        synchronized(list) {
-            state.name = list.title
-            state.url = list.url
-            state.file = list.filePath
+        synchronized(downloadInfo) {
+            state.name = downloadInfo.title
+            state.url = downloadInfo.url
+            state.file = downloadInfo.filePath
             state.threads = pool?.size() ?: 0
             state.error = error
             state.isComplete = complete
-            state.isPlayed = list.isPlayed
+            state.isPlayed = downloadInfo.isPlayed
             if (isLoading)
                 state.state = LoadState.ST_LOADING
             else if (complete)
@@ -176,20 +176,20 @@ class Downloader(val list: List) {
             if (workers?.size != 0 && pool?.isWorking() == true) {
                 state.fragments = workers!!.size
                 workers!!.forEach {
-                    if (it.first.item.isLoad) {
+                    if (it.first.downloadItem.isLoad) {
                         val itmState = ItemState()
-                        itmState.loaded = it.first.item.loaded
-                        itmState.size = it.first.item.size
-                        itmState.complete = it.first.item.isComplete
+                        itmState.loaded = it.first.downloadItem.loaded
+                        itmState.size = it.first.downloadItem.size
+                        itmState.complete = it.first.downloadItem.isComplete
                         itmState.error = it.second.isError
                         state.loadedItems.add(itmState)
 
-                        state.size += it.first.item.size
-                        if (it.first.item.isComplete)
-                            state.loadedBytes += it.first.item.size
+                        state.size += it.first.downloadItem.size
+                        if (it.first.downloadItem.isComplete)
+                            state.loadedBytes += it.first.downloadItem.size
                         else
-                            state.loadedBytes += it.first.item.loaded
-                        if (it.first.item.isComplete) {
+                            state.loadedBytes += it.first.downloadItem.loaded
+                        if (it.first.downloadItem.isComplete) {
                             state.loadedFragments++
                         }
                         if (it.second.isLoading)
@@ -197,7 +197,7 @@ class Downloader(val list: List) {
                     }
                 }
             } else {
-                list.items.forEach {
+                downloadInfo.downloadItems.forEach {
                     if (it.isLoad) {
                         val itmState = ItemState()
                         itmState.size = it.size
@@ -215,7 +215,7 @@ class Downloader(val list: List) {
                     }
                 }
                 if (state.isComplete) {
-                    val fSize = Storage.getDocument(list.filePath).length()
+                    val fSize = Storage.getDocument(downloadInfo.filePath).length()
                     if (fSize > 0)
                         state.size = fSize
                 }
@@ -225,16 +225,16 @@ class Downloader(val list: List) {
     }
 
     private fun loadSubtitles() {
-        if (!list.subsUrl.isEmpty()) {
+        if (!downloadInfo.subsUrl.isEmpty()) {
             try {
-                val file = File(Settings.downloadPath, list.title + ".srt")
+                val file = File(Settings.downloadPath, downloadInfo.title + ".srt")
                 if (!file.exists() || file.length() == 0L) {
-                    val client = ClientBuilder.new(Uri.parse(list.subsUrl))
+                    val client = ClientBuilder.new(Uri.parse(downloadInfo.subsUrl))
                     client.connect()
                     val subs = client.getInputStream()?.bufferedReader()?.readText() ?: ""
                     client.close()
                     if (subs.isNotEmpty()) {
-                        val writer = FileWriter(File(Settings.downloadPath, list.title + ".srt").path)
+                        val writer = FileWriter(File(Settings.downloadPath, downloadInfo.title + ".srt").path)
                         writer.resize(0)
                         writer.write(subs.toByteArray(), 0)
                         writer.close()
@@ -252,7 +252,7 @@ class Downloader(val list: List) {
     private fun preloadSize(file: FileWriter) {
         if (Settings.preloadSize) {
             executor = Executors.newFixedThreadPool(20)
-            list.items.forEach {
+            downloadInfo.downloadItems.forEach {
                 if (it.isLoad && it.size == 0L && !stop) {
                     val worker = Runnable {
                         for (i in 1..Settings.errorRepeat)
@@ -274,7 +274,7 @@ class Downloader(val list: List) {
             executor?.shutdown()
             executor?.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
             executor = null
-            Saver.saveList(list)
+            Saver.saveList(downloadInfo)
         }
     }
 }
