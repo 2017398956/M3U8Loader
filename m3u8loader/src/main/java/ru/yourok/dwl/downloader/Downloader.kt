@@ -7,7 +7,7 @@ import android.widget.Toast
 import ru.yourok.converter.ConverterHelper
 import ru.yourok.dwl.client.ClientBuilder
 import ru.yourok.dwl.list.DownloadInfo
-import ru.yourok.dwl.manager.Notifyer
+import ru.yourok.dwl.manager.NotificationUtil
 import ru.yourok.dwl.settings.Settings
 import ru.yourok.dwl.storage.Storage
 import ru.yourok.dwl.utils.Saver
@@ -115,7 +115,7 @@ class Downloader(val downloadInfo: DownloadInfo) {
                         ConverterHelper.convert(mutableListOf(downloadInfo))
                         ConverterHelper.startConvert()
                     }
-                    Notifyer.toastEnd(downloadInfo, complete, error)
+                    NotificationUtil.toastEnd(downloadInfo, complete, error)
                 }
 
                 pool!!.onFinishWorker {

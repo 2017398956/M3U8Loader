@@ -22,10 +22,10 @@ class LoaderService : Service() {
 
     override fun onDestroy() {
         isUpdates = false
-        if (Notifyer.error.isNotEmpty())
-            Notifyer.sendNotification(this, Notifyer.TYPE_NOTIFYLOAD, getString(R.string.loading_error), Notifyer.error)
+        if (NotificationUtil.error.isNotEmpty())
+            NotificationUtil.sendNotification(this, NotificationUtil.TYPE_NOTIFICATION_LOAD, getString(R.string.loading_error), NotificationUtil.error)
         else
-            Notifyer.sendNotification(this, Notifyer.TYPE_NOTIFYLOAD, getString(R.string.loading_complete))
+            NotificationUtil.sendNotification(this, NotificationUtil.TYPE_NOTIFICATION_LOAD, getString(R.string.loading_complete))
         Manager.saveLists()
         super.onDestroy()
     }
@@ -57,7 +57,7 @@ class LoaderService : Service() {
             percent = (state.loadedFragments * 100 / state.fragments)
 
         val status = "%d/%d %s/sec %d%%".format(state.loadedFragments, state.fragments, Utils.byteFmt(state.speed), percent)
-        Notifyer.sendNotification(this, Notifyer.TYPE_NOTIFYLOAD, state.name, status, percent)
+        NotificationUtil.sendNotification(this, NotificationUtil.TYPE_NOTIFICATION_LOAD, state.name, status, percent)
         return true
     }
 

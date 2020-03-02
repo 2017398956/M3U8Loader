@@ -1,7 +1,6 @@
 package ru.yourok.dwl.parser
 
 import android.net.Uri
-import android.util.Log
 import com.iheartradio.m3u8.*
 import ru.yourok.dwl.client.Client
 import ru.yourok.dwl.client.ClientBuilder
@@ -56,8 +55,8 @@ class Parser(val name: String, val url: String, val downloadPath: String) {
             val m3u8Playlist = m3u8PlaylistParser.parse()
 
             if (m3u8Playlist.hasMasterPlaylist()) {
-                val mList = ParseMaster().parse(Uri.parse(client.getUrl()), m3u8Playlist.masterPlaylist)
-                retList.addAll(mList)
+                val downloadInfoList = ParseMaster().parse(Uri.parse(client.getUrl()), m3u8Playlist.masterPlaylist)
+                retList.addAll(downloadInfoList)
             }
             if (m3u8Playlist.hasMediaPlaylist()) {
                 val list = DownloadInfo()

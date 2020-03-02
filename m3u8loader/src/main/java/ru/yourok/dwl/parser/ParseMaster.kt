@@ -10,22 +10,22 @@ import ru.yourok.dwl.list.DownloadInfo
  */
 class ParseMaster {
     fun parse(url: Uri, masterPlaylist: MasterPlaylist): MutableList<DownloadInfo> {
-        val retList = mutableListOf<DownloadInfo>()
+        val downloadInfoList = mutableListOf<DownloadInfo>()
         masterPlaylist.playlists.forEach {
-            val list = DownloadInfo()
-            list.url = Util.concatUriList(url, it.uri)
-            list.title = it.streamInfo.closedCaptions ?: ""
-            list.bandwidth = it.streamInfo.bandwidth
-            retList.add(list)
+            val downloadInfo = DownloadInfo()
+            downloadInfo.url = Util.concatUriList(url, it.uri)
+            downloadInfo.title = it.streamInfo.closedCaptions ?: ""
+            downloadInfo.bandwidth = it.streamInfo.bandwidth
+            downloadInfoList.add(downloadInfo)
         }
 
         masterPlaylist.iFramePlaylists.forEach {
-            val list = DownloadInfo()
-            list.url = Util.concatUriList(url, it.uri)
-            list.bandwidth = it.bandwidth
-            retList.add(list)
+            val downloadInfo = DownloadInfo()
+            downloadInfo.url = Util.concatUriList(url, it.uri)
+            downloadInfo.bandwidth = it.bandwidth
+            downloadInfoList.add(downloadInfo)
         }
 
-        return retList
+        return downloadInfoList
     }
 }

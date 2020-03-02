@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
             // 刷新任务列表
             while (canRefresh && Manager.isLoading()) {
                 runOnUiThread { update() }
+                // 每隔 500ms 刷新一次下载列表
                 Thread.sleep(500)
             }
             // 为了防止最后刷新后下载任务完成导致状态没有更新，这里再次刷新一下

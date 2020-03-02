@@ -5,7 +5,7 @@ import android.os.Looper
 import android.widget.Toast
 import ru.yourok.converter.Converter
 import ru.yourok.dwl.list.DownloadInfo
-import ru.yourok.dwl.manager.Notifyer
+import ru.yourok.dwl.manager.NotificationUtil
 import ru.yourok.m3u8loader.App
 import ru.yourok.m3u8loader.R
 import kotlin.concurrent.thread
@@ -57,7 +57,7 @@ object Manager {
                     currentConvert = convDownloadInfo[0]
                 }
                 currentConvert?.let {
-                    Notifyer.sendNotification(App.getContext(), Notifyer.TYPE_NOTIFYCONVERT, App.getContext().getString(R.string.converting), it.title, -1)
+                    NotificationUtil.sendNotification(App.getContext(), NotificationUtil.TYPE_NOTIFICATION_CONVERT, App.getContext().getString(R.string.converting), it.title, -1)
                     val err = Converter.convert(it)
                     onEndConvertList?.invoke(it)
                     Handler(Looper.getMainLooper()).post {
@@ -76,9 +76,9 @@ object Manager {
             converting = false
             currentConvert = null
             if (errors.isEmpty())
-                Notifyer.sendNotification(App.getContext(), Notifyer.TYPE_NOTIFYCONVERT, App.getContext().getString(R.string.converting_complete))
+                NotificationUtil.sendNotification(App.getContext(), NotificationUtil.TYPE_NOTIFICATION_CONVERT, App.getContext().getString(R.string.converting_complete))
             else
-                Notifyer.sendNotification(App.getContext(), Notifyer.TYPE_NOTIFYCONVERT, App.getContext().getString(R.string.converting_error), errors.joinToString(", "))
+                NotificationUtil.sendNotification(App.getContext(), NotificationUtil.TYPE_NOTIFICATION_CONVERT, App.getContext().getString(R.string.converting_error), errors.joinToString(", "))
         }
     }
 

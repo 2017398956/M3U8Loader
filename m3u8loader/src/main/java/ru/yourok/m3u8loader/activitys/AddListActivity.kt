@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_add_list.*
 import ru.yourok.converter.ConverterHelper
 import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.manager.Manager
-import ru.yourok.dwl.manager.Notifyer
+import ru.yourok.dwl.manager.NotificationUtil
 import ru.yourok.dwl.parser.Parser
 import ru.yourok.dwl.settings.Settings
 import ru.yourok.dwl.storage.Storage
@@ -112,13 +114,35 @@ class AddListActivity : AppCompatActivity() {
         checkboxConvertAdd.isChecked = Settings.convertVideo && ConverterHelper.isSupport()
 
         updateDownloadPath()
+
+
+        if (download) {
+            downloadBtnClick(buttonDownload)
+        }
+        setListeners()
+    }
+
+    private fun setListeners() {
+        editTextUrl.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val strList = s.toString()?.split("/")
+                if (s.toString()?.endsWith(".m3u8", true)) {
+                    if (strList.size > 1) {
+                        editTextFileName.setText(strList[strList.size - 2])
+                    }
+                } else if (s.toString()?.endsWith(".mp4", true)) {
+                    editTextFileName.setText(strList[strList.size - 1])
+                }
+            }
+        })
+
         buttonSetDownloadPath.setOnClickListener {
             val intent = Intent(this, DirectoryActivity::class.java)
             intent.data = Uri.parse(downloadPath)
             startActivityForResult(intent, 1202)
         }
-
-        if (download) downloadBtnClick(buttonDownload)
     }
 
     private fun updateDownloadPath() {
@@ -163,7 +187,8 @@ class AddListActivity : AppCompatActivity() {
                 val lists = Parser(name, url, downloadPath).parse()
                 lists.forEach {
                     it.subsUrl = subsUrl
-                    it.isConvert = (checkboxConvertAdd?.isChecked ?: Settings.convertVideo) && ConverterHelper.isSupport()
+                    it.isConvert = (checkboxConvertAdd?.isChecked
+                            ?: Settings.convertVideo) && ConverterHelper.isSupport()
                 }
                 Manager.addList(lists)
                 if (download) {
@@ -171,7 +196,7 @@ class AddListActivity : AppCompatActivity() {
                     for (i in start until Manager.getLoadersSize()) Manager.load(i)
                 } else {
                     val names = lists.joinToString { it.title }
-                    Notifyer.sendNotification(this, Notifyer.TYPE_NOTIFYLOAD, getString(R.string.added), names)
+                    NotificationUtil.sendNotification(this, NotificationUtil.TYPE_NOTIFICATION_LOAD, getString(R.string.added), names)
                 }
                 this.setResult(RESULT_OK)
                 this.finish()

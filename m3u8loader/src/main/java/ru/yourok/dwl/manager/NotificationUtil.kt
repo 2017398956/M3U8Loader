@@ -18,11 +18,11 @@ import ru.yourok.m3u8loader.activitys.mainActivity.MainActivity
 /**
  * Created by yourok on 19.11.17.
  */
-object Notifyer {
+object NotificationUtil {
     private var notificationManager: NotificationManager? = null
 
-    val TYPE_NOTIFYLOAD = 0
-    val TYPE_NOTIFYCONVERT = 1
+    const val TYPE_NOTIFICATION_LOAD = 0
+    const val TYPE_NOTIFICATION_CONVERT = 1
 
     fun sendNotification(context: Context, type: Int, title: String, text: String, progress: Int) {
         val channelId = getChannelId(type)
@@ -80,16 +80,16 @@ object Notifyer {
 
     private fun getChannelId(type: Int): String {
         return when (type) {
-            TYPE_NOTIFYLOAD -> "ru.yourok.m3u8loader.load"
-            TYPE_NOTIFYCONVERT -> "ru.yourok.m3u8loader.convert"
+            TYPE_NOTIFICATION_LOAD -> "ru.yourok.m3u8loader.load"
+            TYPE_NOTIFICATION_CONVERT -> "ru.yourok.m3u8loader.convert"
             else -> "ru.yourok.m3u8loader"
         }
     }
 
     private fun getChannelName(type: Int): String {
         return when (type) {
-            TYPE_NOTIFYLOAD -> "Loading"
-            TYPE_NOTIFYCONVERT -> "Converting"
+            TYPE_NOTIFICATION_LOAD -> "Loading"
+            TYPE_NOTIFICATION_CONVERT -> "Converting"
             else -> "M3U8 Loader"
         }
     }
