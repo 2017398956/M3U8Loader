@@ -22,6 +22,11 @@
         android:title="@string/edit"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/itemPlay"
+        android:icon="@drawable/ic_mode_play_black_24dp"
+        android:title="@string/play"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/itemRemove"
         android:icon="@drawable/ic_clear_black_24dp"
         android:title="@string/remove"

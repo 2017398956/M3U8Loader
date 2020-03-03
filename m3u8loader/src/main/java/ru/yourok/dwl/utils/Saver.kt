@@ -19,8 +19,9 @@ object Saver {
     fun removeList(downloadInfo: DownloadInfo) {
         val path = App.getContext().filesDir?.path
         val file = File(path, downloadInfo.title + ".lst")
-        if (file.exists())
+        if (file.exists()) {
             file.delete()
+        }
     }
 
     fun saveList(downloadInfo: DownloadInfo) {

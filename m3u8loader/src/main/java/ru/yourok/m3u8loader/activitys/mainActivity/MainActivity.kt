@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * 刷新任务列表
      */
-    private fun update() {
+    fun update() {
         (listViewLoader.adapter as LoaderListAdapter).notifyDataSetChanged()
     }
 

@@ -96,4 +96,6 @@
 
     <string name="pay_wechat">WeChat</string>
     <string name="pay_alipay">AliPay</string>
+
+    <string name="toast_multi_selected_play">Play the last selected video in multi selection mode</string>
 </resources>

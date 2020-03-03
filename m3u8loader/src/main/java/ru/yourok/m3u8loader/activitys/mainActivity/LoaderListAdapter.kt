@@ -28,76 +28,93 @@ class LoaderListAdapter(val context: Context) : BaseAdapter() {
         return i.toLong()
     }
 
-    override fun getView(index: Int, convertView: View?, viewGroup: ViewGroup): View {
-        val vi: View = convertView
-                ?: (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.loader_list_adaptor, null)
+    override fun getView(index: Int, convertView: View?, viewGroup: ViewGroup?): View {
+        var viewHolder: ViewHolder
+        var vi: View? = convertView
+        if (null == vi) {
+            vi = LayoutInflater.from(context).inflate(R.layout.loader_list_adaptor, null)
+            viewHolder = ViewHolder(vi)
+            vi.tag = viewHolder
+        } else {
+            viewHolder = vi.tag as ViewHolder
+        }
         Manager.getLoader(index)?.let {
-            vi.findViewById<TextView>(R.id.textViewNameItem).setText(it.downloadInfo.title)
-            val imgStatus = vi.findViewById<ImageView>(R.id.imageViewLoader)
+            viewHolder.textViewNameItem?.text = it.downloadInfo.title
             val state = it.getState()
-            when {
-                state.state == LoadState.ST_PAUSE -> {
-                    if (Manager.inQueue(index))
-                        imgStatus.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
-                    else
-                        imgStatus.setImageResource(R.drawable.ic_pause_black_24dp)
+            when (state.state) {
+                LoadState.ST_PAUSE -> {
+                    if (Manager.inQueue(index)) {
+                        viewHolder.imageStatus?.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
+                    } else {
+                        viewHolder.imageStatus?.setImageResource(R.drawable.ic_pause_black_24dp)
+                    }
                 }
-                state.state == LoadState.ST_LOADING -> {
-                    imgStatus.setImageResource(R.drawable.ic_file_download_black_24dp)
+                LoadState.ST_LOADING -> {
+                    viewHolder.imageStatus?.setImageResource(R.drawable.ic_file_download_black_24dp)
                 }
-                state.state == LoadState.ST_COMPLETE -> {
-                    imgStatus.setImageResource(R.drawable.ic_check_black_24dp)
+                LoadState.ST_COMPLETE -> {
+                    viewHolder.imageStatus?.setImageResource(R.drawable.ic_check_black_24dp)
                 }
-                state.state == LoadState.ST_ERROR -> {
-                    imgStatus.setImageResource(R.drawable.ic_report_problem_black_24dp)
+                LoadState.ST_ERROR -> {
+                    viewHolder.imageStatus?.setImageResource(R.drawable.ic_report_problem_black_24dp)
                 }
             }
             if (ConverterHelper.isConvert(it.downloadInfo)) {
-                imgStatus.setImageResource(R.drawable.ic_convert_black)
+                viewHolder.imageStatus?.setImageResource(R.drawable.ic_convert_black)
             }
 
-            if (state.isPlayed)
-                vi.findViewById<View>(R.id.imageViewPlayed).visibility = View.VISIBLE
-            else
-                vi.findViewById<View>(R.id.imageViewPlayed).visibility = View.GONE
+            if (state.isPlayed) {
+                viewHolder.imageViewPlayed?.visibility = View.VISIBLE
+            } else {
+                viewHolder.imageViewPlayed?.visibility = View.GONE
+            }
 
             val err = state.error
-            if (!err.isEmpty())
-                vi.findViewById<TextView>(R.id.textViewError).setText(err)
-            else
-                vi.findViewById<TextView>(R.id.textViewError).setText("")
-
-
-            val progress_f = vi.findViewById<ProgressView>(R.id.li_progress)
-            val progress_s = vi.findViewById<View>(R.id.simpleProgress)
-
+            if (!err.isEmpty()) {
+                viewHolder.textViewError?.text = err
+            } else {
+                viewHolder.textViewError?.text = ""
+            }
             if (Preferences.get("SimpleProgress", false) as Boolean) {
-                progress_f.visibility = View.GONE
-                progress_s.visibility = View.VISIBLE
+                viewHolder.progressF?.visibility = View.GONE
+                viewHolder.progressS?.visibility = View.VISIBLE
 
                 var frags = "%d/%d".format(state.loadedFragments, state.fragments)
                 if (state.threads > 0)
                     frags = "%-3d: %s".format(state.threads, frags)
                 var speed = ""
                 var size = ""
-                if (state.speed > 0)
+                if (state.speed > 0) {
                     speed = "  %s/sec ".format(Utils.byteFmt(state.speed))
-                if (state.size > 0 && state.isComplete)
+                }
+                if (state.size > 0 && state.isComplete) {
                     size = "  %s".format(Utils.byteFmt(state.size))
-                else
+                } else {
                     size = "  %s/%s".format(Utils.byteFmt(state.loadedBytes), Utils.byteFmt(state.size))
-
-                vi.findViewById<ProgressBar>(R.id.li_s_progress).progress = state.loadedFragments * 100 / state.fragments
-                vi.findViewById<TextView>(R.id.textViewFragmentsStat).text = frags
-                vi.findViewById<TextView>(R.id.textViewSpeedStat).text = speed
-                vi.findViewById<TextView>(R.id.textViewSizeStat).text = size
-
+                }
+                viewHolder.progressFS?.progress = state.loadedFragments * 100 / state.fragments
+                viewHolder.textViewFragmentsStat?.text = frags
+                viewHolder.textViewSpeedStat?.text = speed
+                viewHolder.textViewSizeStat?.text = size
             } else {
-                progress_f.visibility = View.VISIBLE
-                progress_s.visibility = View.GONE
-                progress_f.setIndexList(index)
+                viewHolder.progressF?.visibility = View.VISIBLE
+                viewHolder.progressS?.visibility = View.GONE
+                viewHolder.progressF?.setIndexList(index)
             }
         }
-        return vi
+        return vi!!
+    }
+
+    private class ViewHolder(view: View?) {
+        val textViewNameItem = view?.findViewById<TextView>(R.id.textViewNameItem)
+        val imageStatus = view?.findViewById<ImageView>(R.id.imageViewLoader)
+        val imageViewPlayed = view?.findViewById<View>(R.id.imageViewPlayed)
+        val textViewError = view?.findViewById<TextView>(R.id.textViewError)
+        val progressF = view?.findViewById<ProgressView>(R.id.li_progress)
+        val progressS = view?.findViewById<View>(R.id.simpleProgress)
+        val progressFS = view?.findViewById<ProgressBar>(R.id.li_s_progress)
+        val textViewFragmentsStat = view?.findViewById<TextView>(R.id.textViewFragmentsStat)
+        val textViewSpeedStat = view?.findViewById<TextView>(R.id.textViewSpeedStat)
+        val textViewSizeStat = view?.findViewById<TextView>(R.id.textViewSizeStat)
     }
 }

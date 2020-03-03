@@ -11,6 +11,7 @@ import ru.yourok.dwl.utils.Loader
 import ru.yourok.dwl.utils.Saver
 import ru.yourok.m3u8loader.App
 import ru.yourok.m3u8loader.R
+import ru.yourok.m3u8loader.activitys.mainActivity.MainActivity
 import java.io.File
 import java.io.IOException
 import kotlin.concurrent.thread
@@ -106,9 +107,11 @@ object Manager {
                             .setTitle(this@with.getString(R.string.delete) + "?")
                             .setPositiveButton(R.string.delete_with_files) { _, _ ->
                                 removesSome(indexes, true)
+                                (activity as? MainActivity)?.update()
                             }
                             .setNegativeButton(R.string.remove_from_list) { _, _ ->
                                 removesSome(indexes, false)
+                                (activity as? MainActivity)?.update()
                             }
                             .setNeutralButton(" ", null)
                             .show()
@@ -134,8 +137,9 @@ object Manager {
             loaderList.remove(it)
             if (withFile) {
                 Storage.getDocument(it.downloadInfo.filePath).delete()
-                if (it.downloadInfo.subsUrl.isNotEmpty())
+                if (it.downloadInfo.subsUrl.isNotEmpty()) {
                     Storage.getDocument(File(File(it.downloadInfo.filePath).parent, it.downloadInfo.title + ".srt").canonicalPath)?.delete()
+                }
             }
         }
 

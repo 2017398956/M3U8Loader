@@ -8,11 +8,13 @@ import android.view.MenuItem
 import android.widget.AbsListView
 import android.widget.ListView
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import ru.yourok.converter.ConverterHelper
 import ru.yourok.dwl.list.DownloadInfo
 import ru.yourok.dwl.manager.Manager
 import ru.yourok.m3u8loader.R
 import ru.yourok.m3u8loader.activitys.editorActivity.EditorActivity
+import ru.yourok.m3u8loader.player.PlayIntent
 import kotlin.concurrent.thread
 
 /**
@@ -33,6 +35,9 @@ class LoaderListSelectionMenu(val activity: Activity, private val adapter: Loade
     }
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+        activity.findViewById<ListView>(R.id.listViewLoader).choiceMode = ListView.CHOICE_MODE_NONE
+        activity.findViewById<ListView>(R.id.listViewLoader).adapter = LoaderListAdapter(activity)
+        mode?.finish()
         when (item?.itemId) {
             R.id.itemLoad -> {
                 selected.forEach {
@@ -75,15 +80,17 @@ class LoaderListSelectionMenu(val activity: Activity, private val adapter: Loade
                         activity.startActivity(Intent(activity, EditorActivity::class.java))
                 }
             }
+            R.id.itemPlay -> {
+                if (selected.size > 1) {
+                    Toast.makeText(activity, R.string.toast_multi_selected_play, LENGTH_LONG).show()
+                }
+                Manager.getLoader(selected.last())?.let { PlayIntent(activity).start(it) }
+            }
             R.id.itemRemove -> {
                 Manager.removes(selected, activity)
-                adapter.notifyDataSetChanged()
             }
             else -> return false
         }
-        activity.findViewById<ListView>(R.id.listViewLoader).choiceMode = ListView.CHOICE_MODE_NONE
-        activity.findViewById<ListView>(R.id.listViewLoader).adapter = LoaderListAdapter(activity)
-        mode?.finish()
         return true
     }
 
@@ -91,9 +98,10 @@ class LoaderListSelectionMenu(val activity: Activity, private val adapter: Loade
     }
 
     override fun onItemCheckedStateChanged(mode: ActionMode?, position: Int, id: Long, checked: Boolean) {
-        if (checked)
+        if (checked) {
             selected.add(position)
-        else
+        } else {
             selected.remove(position)
+        }
     }
 }
