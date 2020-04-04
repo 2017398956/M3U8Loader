@@ -30,13 +30,13 @@ class LoaderListAdapter(val context: Context) : BaseAdapter() {
 
     override fun getView(index: Int, convertView: View?, viewGroup: ViewGroup?): View {
         var viewHolder: ViewHolder
-        var vi: View? = convertView
-        if (null == vi) {
-            vi = LayoutInflater.from(context).inflate(R.layout.loader_list_adaptor, null)
-            viewHolder = ViewHolder(vi)
-            vi.tag = viewHolder
+        var view: View? = convertView
+        if (null == view) {
+            view = LayoutInflater.from(context).inflate(R.layout.loader_list_adaptor, null)
+            viewHolder = ViewHolder(view)
+            view.tag = viewHolder
         } else {
-            viewHolder = vi.tag as ViewHolder
+            viewHolder = view.tag as ViewHolder
         }
         Manager.getLoader(index)?.let {
             viewHolder.textViewNameItem?.text = it.downloadInfo.title
@@ -70,7 +70,7 @@ class LoaderListAdapter(val context: Context) : BaseAdapter() {
             }
 
             val err = state.error
-            if (!err.isEmpty()) {
+            if (err.isNotEmpty()) {
                 viewHolder.textViewError?.text = err
             } else {
                 viewHolder.textViewError?.text = ""
@@ -102,7 +102,7 @@ class LoaderListAdapter(val context: Context) : BaseAdapter() {
                 viewHolder.progressF?.setIndexList(index)
             }
         }
-        return vi!!
+        return view!!
     }
 
     private class ViewHolder(view: View?) {
