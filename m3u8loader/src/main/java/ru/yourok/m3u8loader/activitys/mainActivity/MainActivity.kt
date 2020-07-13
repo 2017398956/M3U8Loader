@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -13,9 +16,11 @@ import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.materialdrawer.Drawer
-import dalvik.system.DexClassLoader
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.yourok.dwl.downloader.LoadState
 import ru.yourok.dwl.manager.Manager
@@ -37,12 +42,13 @@ class MainActivity : AppCompatActivity() {
     // 是否一直刷新任务列表
     private var canRefresh: Boolean = true
     private lateinit var drawer: Drawer
+    private lateinit var viewPager2: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Theme.set(this)
-
         setContentView(R.layout.activity_main)
+        initView()
         requestPermissionWithRationale()
         listViewLoader.adapter = LoaderListAdapter(this)
         drawer = NavigationBar.setup(this, listViewLoader.adapter as LoaderListAdapter)
@@ -54,6 +60,23 @@ class MainActivity : AppCompatActivity() {
                 Updater.showSnackbar(this@MainActivity)
             }
         }
+    }
+
+    private fun initView() {
+        viewPager2 = findViewById(R.id.vp_2)
+        val downloadedFragment:Fragment = Fragment(R.layout.fragment_downloaded)
+        val downloadingFragment:Fragment = Fragment(R.layout.fragment_downloading)
+        val fragments: Array<Fragment> = Array(1)
+        viewPager2.adapter = object : FragmentStateAdapter(supportFragmentManager, lifecycle){
+            override fun getItemCount(): Int {
+                TODO("Not yet implemented")
+            }
+
+            override fun createFragment(position: Int): Fragment {
+                if(position )
+            }
+        }
+
     }
 
     private fun setListeners() {

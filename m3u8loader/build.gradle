@@ -1,8 +1,8 @@
-import java.text.SimpleDateFormat
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+
+import java.text.SimpleDateFormat
 
 def liteKeystorePropertiesFile = rootProject.file("lite.properties")
 def liteProperties = new Properties()
