@@ -24,11 +24,9 @@ object Manager {
     private var queueList: MutableList<Int> = mutableListOf()
 
     init {
-        val list = Loader.loadLists()
-        if (list != null)
-            list.forEach {
-                loaderList.add(Downloader(it))
-            }
+        Loader.loadLists()?.forEach {
+            loaderList.add(Downloader(it))
+        }
     }
 
     fun getLoader(index: Int): Downloader? {
@@ -107,11 +105,11 @@ object Manager {
                             .setTitle(this@with.getString(R.string.delete) + "?")
                             .setPositiveButton(R.string.delete_with_files) { _, _ ->
                                 removesSome(indexes, true)
-                                (activity as? MainActivity)?.update()
+//                                (activity as? MainActivity)?.update()
                             }
                             .setNegativeButton(R.string.remove_from_list) { _, _ ->
                                 removesSome(indexes, false)
-                                (activity as? MainActivity)?.update()
+//                                (activity as? MainActivity)?.update()
                             }
                             .setNeutralButton(" ", null)
                             .show()
@@ -312,5 +310,27 @@ object Manager {
 
     fun getCurrentLoader(): Int {
         return currentLoader
+    }
+
+    /**
+     * 获取未下载完成的任务
+     */
+    fun canDownloadingList(canDownloadingList: MutableList<Downloader>) {
+        for (i in 0 until loaderList.size) {
+            if (!loaderList[i].isComplete()) {
+                canDownloadingList.add(loaderList[i])
+            }
+        }
+    }
+
+    /**
+     * 获取已下载完成的任务
+     */
+    fun downloadedList(downloadedList: MutableList<Downloader>) {
+        for (i in 0 until loaderList.size) {
+            if (loaderList[i].isComplete()) {
+                downloadedList.add(loaderList[i])
+            }
+        }
     }
 }

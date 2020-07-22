@@ -16,6 +16,7 @@ import ru.yourok.dwl.utils.Utils
 import ru.yourok.m3u8loader.R
 
 class LoaderListAdapter(val context: Context) : BaseAdapter() {
+
     override fun getCount(): Int {
         return Manager.getLoadersSize()
     }

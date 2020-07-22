@@ -12,17 +12,14 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
-import com.mikepenz.materialdrawer.Drawer
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_main.*
-import ru.yourok.dwl.downloader.LoadState
 import ru.yourok.dwl.manager.Manager
 import ru.yourok.dwl.settings.Preferences
 import ru.yourok.dwl.updater.Updater
@@ -30,30 +27,28 @@ import ru.yourok.m3u8loader.BuildConfig
 import ru.yourok.m3u8loader.R
 import ru.yourok.m3u8loader.activitys.DonateActivity
 import ru.yourok.m3u8loader.activitys.preferenceActivity.PreferenceActivity
-import ru.yourok.m3u8loader.navigationBar.NavigationBar
-import ru.yourok.m3u8loader.player.PlayIntent
+import ru.yourok.m3u8loader.fragment.DownloadedFragment
+import ru.yourok.m3u8loader.fragment.DownloadingFragment
 import ru.yourok.m3u8loader.theme.Theme
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
     // 是否一直刷新任务列表
     private var canRefresh: Boolean = true
-    private lateinit var drawer: Drawer
-    private lateinit var viewPager2: ViewPager2
+    private val tabNames = mutableListOf<String>("下载中", "已下")
+    private val fragments = mutableListOf<Fragment>(
+            DownloadingFragment(R.layout.fragment_downloading),
+            DownloadedFragment(R.layout.fragment_downloaded)
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Theme.set(this)
         setContentView(R.layout.activity_main)
-        initView()
         requestPermissionWithRationale()
-        listViewLoader.adapter = LoaderListAdapter(this)
-        drawer = NavigationBar.setup(this, listViewLoader.adapter as LoaderListAdapter)
-        setListeners()
-        showMenuHelp()
+        initView()
         // 版本升级提示，这里先关闭
         Timer().schedule(1000) {
             if (false && Updater.hasNewUpdate()) {
@@ -63,86 +58,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        viewPager2 = findViewById(R.id.vp_2)
-        val downloadedFragment:Fragment = Fragment(R.layout.fragment_downloaded)
-        val downloadingFragment:Fragment = Fragment(R.layout.fragment_downloading)
-        val fragments: Array<Fragment> = Array(1)
-        viewPager2.adapter = object : FragmentStateAdapter(supportFragmentManager, lifecycle){
+        vp_2.adapter = object : FragmentStateAdapter(supportFragmentManager, lifecycle) {
             override fun getItemCount(): Int {
-                TODO("Not yet implemented")
+                return fragments.size
             }
 
             override fun createFragment(position: Int): Fragment {
-                if(position )
+                return fragments[position]
             }
         }
-
-    }
-
-    private fun setListeners() {
-        listViewLoader.setMultiChoiceModeListener(LoaderListSelectionMenu(this, listViewLoader.adapter as LoaderListAdapter))
-        listViewLoader.setOnItemClickListener { _, _, i: Int, _ ->
-            val loader = Manager.getLoader(i)
-            if (loader?.getState()?.state == LoadState.ST_COMPLETE) {
-                // 如果这个任务已经完成，点击的时候就播放
-                PlayIntent(this).start(loader)
-            } else {
-                if (Manager.inQueue(i)) {
-                    Manager.stop(i)
-                } else {
-                    Manager.load(i)
-                }
-            }
-            update()
-        }
-        listViewLoader.setOnItemLongClickListener { _, _, i, _ ->
-            try {
-                listViewLoader.choiceMode = ListView.CHOICE_MODE_MULTIPLE_MODAL
-                listViewLoader.setItemChecked(i, true)
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
-        }
-    }
-
-    /**
-     * 刷新任务列表
-     */
-    fun update() {
-        (listViewLoader.adapter as LoaderListAdapter).notifyDataSetChanged()
-    }
-
-    /**
-     * 当下载列表中没有任务时，1s 后自动打开左侧菜单
-     */
-    private fun showMenuHelp() {
-        if (Manager.getLoadersSize() == 0)
-            Timer().schedule(1000) {
-                if (Manager.getLoadersSize() == 0)
-                    runOnUiThread { drawer.openDrawer() }
-            }
-        else drawer.closeDrawer()
+        TabLayoutMediator(tabLayout,
+                vp_2,
+                true,
+                TabLayoutMediator.TabConfigurationStrategy { tab, position -> tab.text = tabNames[position] })
+                .attach()
     }
 
     override fun onResume() {
         super.onResume()
         canRefresh = true
         // 当任务列表界面重新展示在前台时要刷新一下，以更新其它位置的操作
-        update()
         showDonate()
-        thread {
-            // 刷新任务列表
-            while (canRefresh && Manager.isLoading()) {
-                runOnUiThread { update() }
-                // 每隔 500ms 刷新一次下载列表
-                Thread.sleep(500)
-            }
-            // 为了防止最后刷新后下载任务完成导致状态没有更新，这里再次刷新一下
-            runOnUiThread { update() }
-            // TODO 取消通知栏的下载进度
-        }
     }
 
     override fun onPause() {
@@ -156,8 +92,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (drawer.isDrawerOpen) {
-            drawer.closeDrawer()
+        if ((fragments[0] as DownloadingFragment).closeDrawer()) {
             return
         }
 

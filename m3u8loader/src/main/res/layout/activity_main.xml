@@ -10,14 +10,14 @@
     android:id="@+id/main_layout"
     tools:context="ru.yourok.m3u8loader.activitys.mainActivity.MainActivity">
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"
         android:id="@+id/vp_2"
-        android:layout_height="300dp"/>
-
-    <ListView
-        android:id="@+id/listViewLoader"
-        android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
 </LinearLayout>

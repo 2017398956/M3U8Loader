@@ -1,6 +1,8 @@
 package ru.yourok.m3u8loader.navigationBar
 
+import android.app.Activity
 import android.content.Intent
+import android.widget.BaseAdapter
 import androidx.appcompat.app.AppCompatActivity
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.builders.footer
@@ -19,7 +21,7 @@ import ru.yourok.m3u8loader.activitys.updaterActivity.UpdaterActivity
 
 
 object NavigationBar {
-    fun setup(activity: AppCompatActivity, adapter: LoaderListAdapter): Drawer {
+    fun setup(activity: Activity, adapter: BaseAdapter): Drawer {
         with(activity) {
             return drawer {
                 headerViewRes = R.layout.header
