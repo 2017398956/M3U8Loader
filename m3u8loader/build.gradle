@@ -87,6 +87,10 @@ android {
             signingConfig signingConfigs.converter
         }
     }
+
+//    buildFeatures {
+//        viewBinding true
+//    }
 }
 
 dependencies {
@@ -95,9 +99,10 @@ dependencies {
     implementation 'co.zsmb:materialdrawer-kt:3.0.0'
     implementation project(':crystalrangeseekbar')
     implementation project(':videokit')
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.preference:preference:1.1.1'
     implementation project(':open_m3u8')
+    implementation 'cn.yipianfengye.android:zxing-library:2.2'
 }
 
 repositories {

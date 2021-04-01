@@ -1,6 +1,7 @@
 package ru.yourok.m3u8loader.activitys.mainActivity
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -37,8 +38,8 @@ class MainActivity : AppCompatActivity() {
 
     // 是否一直刷新任务列表
     private var canRefresh: Boolean = true
-    private val tabNames = mutableListOf<String>("下载中", "已下")
-    private val fragments = mutableListOf<Fragment>(
+    private val tabNames = mutableListOf("下载中", "已下")
+    private val fragments = mutableListOf(
             DownloadingFragment(R.layout.fragment_downloading),
             DownloadedFragment(R.layout.fragment_downloaded)
     )

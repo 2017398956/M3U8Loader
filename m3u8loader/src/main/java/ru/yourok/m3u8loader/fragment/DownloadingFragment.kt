@@ -25,6 +25,8 @@ import kotlin.concurrent.thread
 class DownloadingFragment(contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     private lateinit var drawer: Drawer
+    private val canDownloadingList = mutableListOf<Downloader>()
+    private var updateThread: Thread? = null
 
     // 是否一直刷新任务列表
     private var canRefresh: Boolean = true
@@ -38,7 +40,7 @@ class DownloadingFragment(contentLayoutId: Int) : Fragment(contentLayoutId) {
             setListeners()
             drawer = NavigationBar.setup(context as Activity, lv_downloading.adapter as BaseAdapter)
             showMenuHelp()
-            thread {
+            updateThread = thread {
                 // 刷新任务列表
                 while (canRefresh && Manager.isLoading()) {
                     activity?.runOnUiThread { update() }
@@ -60,8 +62,6 @@ class DownloadingFragment(contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     private fun initView() {
         lv_downloading.adapter = object : BaseAdapter() {
-
-            val canDownloadingList = mutableListOf<Downloader>()
 
             init {
                 Manager.canDownloadingList(canDownloadingList)
@@ -88,6 +88,7 @@ class DownloadingFragment(contentLayoutId: Int) : Fragment(contentLayoutId) {
                 } else {
                     holder = view.tag as ViewHolder
                 }
+                //
                 holder.itemView.textViewNameItem?.text = canDownloadingList[position].downloadInfo.title
                 val state = canDownloadingList[position].getState()
                 when (state.state) {
@@ -185,6 +186,7 @@ class DownloadingFragment(contentLayoutId: Int) : Fragment(contentLayoutId) {
     }
 
     private fun update() {
+        Manager.canDownloadingList(canDownloadingList)
         (lv_downloading.adapter as BaseAdapter)?.notifyDataSetChanged()
     }
 
@@ -217,6 +219,14 @@ class DownloadingFragment(contentLayoutId: Int) : Fragment(contentLayoutId) {
             return true
         }
         return false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (null != updateThread){
+            canRefresh = false
+            updateThread = null
+        }
     }
 
 }

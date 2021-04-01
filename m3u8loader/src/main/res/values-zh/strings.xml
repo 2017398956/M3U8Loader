@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="name">命名为</string>
     <string name="url_link">链接地址</string>
     <string name="settings">设置</string>
@@ -88,4 +88,5 @@
     <string name="pay_alipay">支付宝</string>
 
     <string name="toast_multi_selected_play">多选状态下播放最后一个选中的视频</string>
+    <string name="scan" tools:ignore="ExtraTranslation">扫描</string>
 </resources>

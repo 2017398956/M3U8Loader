@@ -30,8 +30,20 @@ object Manager {
     }
 
     fun getLoader(index: Int): Downloader? {
-        if (index in 0 until loaderList.size)
-            return loaderList[index]
+        // 这里改为从下载中的任务中获取
+        var loadingSize = 0
+        for (i in 0 until loaderList.size){
+            if (!loaderList[i].isComplete()){
+                loadingSize++
+                if (loadingSize - 1 == index){
+                    return loaderList[i]
+                }else if (loadingSize - 1 > index){
+                    return null
+                }
+            }
+        }
+//        if (index in 0 until loaderList.size)
+//            return loaderList[index]
         return null
     }
 
@@ -317,7 +329,7 @@ object Manager {
      */
     fun canDownloadingList(canDownloadingList: MutableList<Downloader>) {
         for (i in 0 until loaderList.size) {
-            if (!loaderList[i].isComplete()) {
+            if (!loaderList[i].isComplete() && !canDownloadingList.contains(loaderList[i])) {
                 canDownloadingList.add(loaderList[i])
             }
         }
@@ -328,7 +340,7 @@ object Manager {
      */
     fun downloadedList(downloadedList: MutableList<Downloader>) {
         for (i in 0 until loaderList.size) {
-            if (loaderList[i].isComplete()) {
+            if (loaderList[i].isComplete() && !downloadedList.contains(loaderList[i])) {
                 downloadedList.add(loaderList[i])
             }
         }

@@ -10,6 +10,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.uuzuche.lib_zxing.activity.CaptureActivity
+import com.uuzuche.lib_zxing.activity.CodeUtils
 import kotlinx.android.synthetic.main.activity_add_list.*
 import ru.yourok.converter.ConverterHelper
 import ru.yourok.dwl.list.DownloadInfo
@@ -32,6 +34,7 @@ class AddListActivity : AppCompatActivity() {
     // 下载文件保存目录
     private var downloadPath = Settings.downloadPath
     private var showNotify = false
+    private val REQUEST_CODE_SCAN = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,6 +145,11 @@ class AddListActivity : AppCompatActivity() {
             val intent = Intent(this, DirectoryActivity::class.java)
             intent.data = Uri.parse(downloadPath)
             startActivityForResult(intent, 1202)
+        }
+
+        btn_scan.setOnClickListener {
+            val intent = Intent(this, CaptureActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE_SCAN)
         }
     }
 
@@ -258,6 +266,23 @@ class AddListActivity : AppCompatActivity() {
         if (requestCode == 1202 && data != null) {
             downloadPath = data.getStringExtra("filename")
             updateDownloadPath()
+        }
+        if (requestCode == REQUEST_CODE_SCAN) {
+            /**
+             * 处理二维码扫描结果
+             */
+            if (requestCode === REQUEST_CODE_SCAN) {
+                //处理扫描结果（在界面上显示）
+                if (null != data) {
+                    val bundle: Bundle = data.extras ?: return
+                    if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                        val result = bundle.getString(CodeUtils.RESULT_STRING)
+                        editTextUrl.setText(result)
+                    } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
+                        Toast.makeText(this, "解析二维码失败", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
     }
 }

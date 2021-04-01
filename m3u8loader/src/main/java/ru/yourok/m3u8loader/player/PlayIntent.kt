@@ -116,7 +116,7 @@ class PlayIntent(val context: Context) {
         intent.setDataAndType(uri, "video/mp4")
         intent.putExtra("title", title)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.`package` = pkg
+        intent.setPackage(pkg)
         return intent
     }
 
